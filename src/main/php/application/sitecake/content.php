@@ -115,32 +115,24 @@ class content {
 		if (!io::file_exists($path))
 			return $url;
 		
-		$id = $info['id'];	
-		if (meta::exists($id)) {
-			// if the image already a draft image
-			$meta = meta::get($id);
+		if (meta::exists($info['id'])) {
+			$meta = meta::get($info['id']);
 			$spath = util::apath($meta['orig']);
-			$dpath = $GLOBALS['DRAFT_CONTENT_DIR'] . DS . $meta['name'];
-			$meta['path'] = util::rpath($dpath);
-			$meta['data'] = $data;
-			content::transform_image($spath, $dpath, $data);
-			meta::put($id, $meta);
-			return $GLOBALS['DRAFT_CONTENT_URL'] . '/' . $meta['name'];
 		} else {
-			// otherwise, if the image is a template image, transform the image
-			// and save it as a new draft
-			$id = util::id();
-			$name = $id . '.' . $info['ext'];
-			$dpath = $GLOBALS['DRAFT_CONTENT_DIR'] . DS . $name;
-			content::transform_image($path, $dpath, $data);
-			meta::put($id, array(
-				'orig' => util::rpath($path),
-				'path' => util::rpath($dpath),
-				'name' => $name,
-				'data' => $data
-			));
-			return $GLOBALS['DRAFT_CONTENT_URL'] . '/' . $name;
+			$spath = $path;
 		}
+		
+		$id = util::id();
+		$name = $id . '.' . $info['ext'];
+		$dpath = $GLOBALS['DRAFT_CONTENT_DIR'] . DS . $name;
+		content::transform_image($spath, $dpath, $data);
+		meta::put($id, array(
+						'orig' => util::rpath($spath),
+						'path' => util::rpath($dpath),
+						'name' => $name,
+						'data' => $data
+		));
+		return $GLOBALS['DRAFT_CONTENT_URL'] . '/' . $name;		
 	}
 	
 	static function image_info($url) {
