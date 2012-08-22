@@ -17,7 +17,9 @@ class service {
 				
 		if (service::auth() || 
 				$action == 'login' || $action != 'change') {
-			return service::$action($req);
+			$res = service::$action($req);
+			meta::save();
+			return $res;
 		} else {
 			return service::response($req->query(), 
 				array('status' => -1, 'errorMessage' => 'Not authorized'));
@@ -67,6 +69,10 @@ class service {
 		return service::response($req->query(), 
 			isset($params['pages']) ? pages::update(json::decode(
 				$params['pages'], json::TYPE_ARRAY)) : pages::all());
+	}
+	
+	static function image_transform(Request $req) {
+		return service::response($req->query(), image::transform($req->post()));	
 	}
 	
 	private static function auth() {	
