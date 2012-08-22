@@ -4,14 +4,42 @@ namespace sitecake;
 use Zend\Json\Json as json;
 
 class meta {
+	
+	static $data = null;
+	static $dirty = false;
+	
+	static function &data() {
+		if (!is_array(meta::$data)) {
+			meta::$data = meta::load();
+		}
+		return meta::$data;
+	}
+	
+	static function load() {
+		meta::$dirty = false;
+		$path = meta::path();
+		if (io::file_exists($path)) {
+			return json::decode(io::file_get_contents($path), json::TYPE_ARRAY);
+		} else {
+			return array();
+		}
+	}
+	
+	static function save() {
+		if (meta::$dirty) {
+			meta::$dirty = false;
+			io::file_put_contents(meta::path(), json::encode(meta::$data));
+		}
+	}
+	
 	/**
-	 * Checks if there is a meta file for the specified object id.
+	 * Checks if there is a meta data for the specified object id.
 	 * 
 	 * @param string $id object id
-	 * @return true if the meta file exists, false if not
+	 * @return true if the meta data exists, false if not
 	 */
 	static function exists($id) {
-		return io::file_exists(meta::path($id));
+		return array_key_exists($id, meta::data());
 	}
 	
 	/**
@@ -23,9 +51,27 @@ class meta {
 	 * 			name is specified
 	 */
 	static function get($id, $prop = null) {
-		$data = json::decode(io::file_get_contents(meta::path($id)), 
-			json::TYPE_ARRAY);
-		return $prop ? $data[$prop] : $data;
+		$data = meta::data();
+		return !isset($data[$id]) ? null : (!$prop ? $data[$id] : 
+			(isset($data[$id][$prop]) ? $data[$id][$prop] : null));
+	}
+	
+	/**
+	 * Returns all meta data that have the given property name and, optionally,
+	 * the given value of that property.
+	 *
+	 * @param mixed $prop
+	 * @param mixed $val
+	 */
+	static function find($prop, $val = null) {
+		$result = array();
+		foreach (meta::data() as $data) {
+			if (isset($data[$prop]) && 
+					(!$val || ($val && $data[$prop] == $val))) {
+				array_push($result, $data);
+			}
+		}
+		return $result;
 	}
 	
 	/**
@@ -34,12 +80,7 @@ class meta {
 	 * @return array 
 	 */
 	static function ids() {
-		$metas = array();
-		$paths = io::glob($GLOBALS['DRAFT_CONTENT_DIR'] . DS . '*.meta');
-		foreach ($paths as $path) {
-			array_push($metas, basename($path, '.meta'));
-		}
-		return $metas;
+		return array_keys(meta::data());
 	}
 	
 	/**
@@ -50,7 +91,9 @@ class meta {
 	 * @param array $data the object meta data
 	 */
 	static function put($id, $data) {
-		return io::file_put_contents(meta::path($id), json::encode($data));
+		meta::$dirty = true;
+		$md = &meta::data();
+		$md[$id] = $data;
 	}
 	
 	/**
@@ -61,7 +104,9 @@ class meta {
 	 * @param array $data the new meta data properties
 	 */
 	static function update($id, $data) {
-		return meta::put($id, json::encode(array_merge(meta::get($id), $data)));	
+		meta::$dirty = true;
+		$md = &meta::data();
+		$md[$id] = array_merge(meta::get($id), $data);		
 	}
 	
 	/**
@@ -70,10 +115,12 @@ class meta {
 	 * @param string $id the object id
 	 */
 	static function remove($id) {
-		return io::unlink(meta::path($id));
+		meta::$dirty = true;
+		$md = &meta::data();
+		unset($md[$id]);
 	}
 	
-	static function path($id) {
-		return $GLOBALS['DRAFT_CONTENT_DIR'] . DS . $id . '.meta';
+	static function path() {
+		return $GLOBALS['DRAFT_CONTENT_DIR'] . DS . 'meta.data';
 	}
 }

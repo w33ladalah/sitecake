@@ -32,7 +32,11 @@ class upload {
 			($fileExt ? '.' . $fileExt : '');
 			
 		io::file_put_contents($file, io::file_get_contents("php://input"));
-		
+		meta::put($id, array(
+			'path' => util::rpath($file),
+			'name' => basename($file)
+		));
+
 		$result = array('status' => 0);
 		$result['id'] = $id;
 		
@@ -55,6 +59,7 @@ class upload {
 				img::unload();
 				meta::put($thumbId, array(
 					'orig' => util::rpath($file),
+					'oid'  => $id,
 					'path' => util::rpath($thumbFile),
 					'name' => basename($thumbFile)
 				));
@@ -80,6 +85,7 @@ class upload {
 				img::unload();
 				meta::put($resizedId, array(
 					'orig' => util::rpath($file),
+					'oid'  => $id,
 					'path' => util::rpath($resizedFile),
 					'name' => basename($resizedFile)
 				));				

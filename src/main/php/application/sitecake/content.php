@@ -28,18 +28,17 @@ class content {
 	static function save($params) {
 		$id = $params['scpageid'];
 		$draft = draft::get($id);
-		foreach ($params as $container => $data) {
+		foreach ($params as $container => $content) {
 			if ($container == 'scpageid') continue;
 			// remove slashes
 			if (get_magic_quotes_gpc())
-				$data = stripcslashes($data);	
-			$data = base64_decode($data);
-			if (!empty($data)) {
-				$data = content::process_save(
-					array_key_exists($container, $draft) ? 
-					$draft[$container] : '', $data);
+				$content = stripcslashes($content);	
+			$content = base64_decode($content);
+			if (!empty($content)) {
+				$content = (string)(phpQuery::newDocumentXHTML(
+					content::fixXHTML($content)));
 			}
-			$draft[$container] = $data;		
+			$draft[$container] = $content;		
 		}
 		draft::update($id, $draft);
 		return array('status' => 0);
@@ -72,7 +71,6 @@ class content {
 				renderer::normalizeContainerNames($tpl);
 				renderer::injectDraftContent($tpl, $draft);
 				renderer::cleanupContainerNames($tpl);
-				content::publish_cleanup($tpl);
 				renderer::savePageFile($pageFile, (string)$tpl);
 				$repeaters = content::repeaters($draft);
 				if (!empty($repeaters)) {
@@ -86,99 +84,11 @@ class content {
 		return array('status' => 0);
 	}
 	
-	static function process_save($old, $new) {
-		$oldDoc = phpQuery::newDocumentXHTML(content::fixXHTML($old));
-		$newDoc = phpQuery::newDocumentXHTML(content::fixXHTML($new));
-		foreach (phpQuery::pq('img', $newDoc) as $imgNode) {
-			$img = phpQuery::pq($imgNode, $newDoc);
-			$url = $img->attr('src');
-			$data = $img->attr('data');
-			$oldImg = phpQuery::pq("img[src='$url']", $oldDoc);
-			if (!$oldImg || $oldImg->attr('data') != $data) {
-				$img->attr('src', content::process_image($url, $data));
-			}
-		}
-		return (string)$newDoc;
-	}
-	
 	static function fixXHTML($markup) {
 		$markup = DOMDocumentWrapper::expandEmptyTag('br', $markup);
 		$markup = DOMDocumentWrapper::expandEmptyTag('img', $markup);
 		$markup = DOMDocumentWrapper::expandEmptyTag('textarea', $markup);
 		return $markup;
-	}
-	
-	static function process_image($url, $data) {
-		$info = content::image_info($url);
-		
-		$path = $info['path'];
-		if (!io::file_exists($path))
-			return $url;
-		
-		if (meta::exists($info['id'])) {
-			$meta = meta::get($info['id']);
-			$spath = util::apath($meta['orig']);
-		} else {
-			$spath = $path;
-		}
-		
-		$id = util::id();
-		$name = $id . '.' . $info['ext'];
-		$dpath = $GLOBALS['DRAFT_CONTENT_DIR'] . DS . $name;
-		content::transform_image($spath, $dpath, $data);
-		meta::put($id, array(
-						'orig' => util::rpath($spath),
-						'path' => util::rpath($dpath),
-						'name' => $name,
-						'data' => $data
-		));
-		return $GLOBALS['DRAFT_CONTENT_URL'] . '/' . $name;		
-	}
-	
-	static function image_info($url) {
-		return array(
-			'id' => reset(explode('.', end(explode('/', $url)))),
-			'ext' => end(explode('.', end(explode('/', $url)))),
-			'path' => $GLOBALS['SC_ROOT'] . DS . $url,
-			'name' => basename($GLOBALS['SC_ROOT'] . DS . $url)
-		);
-	}
-	
-	static function transform_image($spath, $dpath, $data) {
-		$datas = explode(':', $data);
-		$srcWidth = $datas[0];
-		$srcHeight = $datas[1];
-		$srcX = $datas[2];
-		$srcY = $datas[3];
-		$dstWidth = $datas[4];
-		$dstHeight = $datas[5];
-		
-		img::load($spath);
-			
-		$origWidth = img::getWidth();
-		$origHeight = img::getHeight();
-		
-		$xRatio = $origWidth / $srcWidth;
-		$yRatio = $origHeight / $srcHeight;
-		
-		$srcWidth = $dstWidth * $xRatio;
-		$srcHeight= $dstHeight * $yRatio;
-		$srcX = $srcX * $xRatio;
-		$srcY = $srcY * $yRatio;
-		
-		img::transform($srcX, $srcY, $srcWidth, $srcHeight, 
-			$dstWidth, $dstHeight);
-		img::save($dpath);
-		img::unload();
-	}
-	
-	static function publish_cleanup($tpl) {
-		foreach (phpQuery::pq(
-				'*[class*="sc-content"] img, *[class*="sc-repeater"] img', 
-				$tpl) as $imgNode) {
-			$img = phpQuery::pq($imgNode, $tpl);
-			$img->removeAttr('data');
-		}		
 	}
 	
 	static function publish_res($draft) {
@@ -224,7 +134,6 @@ class content {
 				$tpl = phpQuery::newDocument($html);
 				renderer::normalizeContainerNames($tpl);
 				renderer::injectDraftContent($tpl, $repeaters);
-				content::publish_cleanup($tpl);
 				renderer::cleanupContainerNames($tpl);
 				renderer::savePageFile($pageFile, (string)$tpl);
 			}			

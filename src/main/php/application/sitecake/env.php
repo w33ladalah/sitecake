@@ -8,7 +8,9 @@ class env {
 			env::ensureDirectory($GLOBALS['DRAFT_CONTENT_DIR']),
 			env::ensureDirectory($GLOBALS['PUBLIC_IMAGES_DIR']),
 			env::ensureDirectory($GLOBALS['PUBLIC_FILES_DIR']),
-			env::ensureDirectory($GLOBALS['TEMP']));
+			env::ensureDirectory($GLOBALS['TEMP']),
+			env::checkSitemap());
+		
 	}
 	
 	/**
@@ -37,6 +39,20 @@ class env {
 				resources::message('DIR_NOT_WRITABLE', $path));
 		}
 
+		return $errors;
+	}
+	
+	/**
+	 * Checks if the sitemap file is writtable.
+	 * 
+	 * @return array with error text messages
+	 */
+	static function checkSitemap() {
+		$errors = array();
+		$path = $GLOBALS['SITE_MAP_FILE'];
+		if (io::file_exists($path) && !io::is_writable($path)) {
+			array_push($errors, resources::message('FILE_NOT_WRITABLE', $path));
+		}
 		return $errors;
 	}
 }
