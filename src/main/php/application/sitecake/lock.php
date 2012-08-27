@@ -37,7 +37,7 @@ class lock {
 	static function timedout($lock) {
 		$timeout = io::file_get_contents($lock);
 		return $timeout == 0 ? 
-			false : (io::filemtime($lock) + $timeout) > time();
+			false : (io::filemtime($lock) + $timeout) < time();
 	}
 	
 	static function path($name) {
