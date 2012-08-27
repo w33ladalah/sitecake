@@ -17,9 +17,13 @@ class service {
 				
 		if (service::auth() || 
 				$action == 'login' || $action != 'change') {
+			ob_start();
 			$res = service::$action($req);
 			meta::save();
-			return $res;
+			$ob = ob_get_contents();
+			ob_end_clean();
+			return $ob ? service::response($req->query(), 
+				array('status' => -1, 'errorMessage' => $ob)) : $res;
 		} else {
 			return service::response($req->query(), 
 				array('status' => -1, 'errorMessage' => 'Not authorized'));
