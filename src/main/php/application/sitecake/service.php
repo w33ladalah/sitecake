@@ -18,8 +18,13 @@ class service {
 		if (service::auth() || 
 				$action == 'login' || $action != 'change') {
 			ob_start();
-			$res = service::$action($req);
-			meta::save();
+			try {
+				$res = service::$action($req);
+				meta::save();
+			} catch (\Exception $e) {
+				echo $e->getMessage() . "\n";
+				echo $e->getTraceAsString();
+			}
 			$ob = ob_get_contents();
 			ob_end_clean();
 			return $ob ? service::response($req->query(), 
