@@ -21,7 +21,7 @@ permission notices:
 
   SiteCake - Web publishing software
   Copyright 2011-2012 by the SiteCake corp.
-  SiteCake is released under the GPL
+  SiteCake is released under the GPLv2
 
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -312,4 +312,4 @@ WRITTEN OFFER
 The source code for any program binaries or compressed scripts that are
 included with SiteCake can be freely obtained at the following URL:
 
-	http://wordpress.org/download/source
+	http://github.com/sitecake
