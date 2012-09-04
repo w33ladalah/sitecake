@@ -15,7 +15,7 @@ class PHPUnit_Framework_MockObject_GeneratorExt extends PHPUnit_Framework_MockOb
 			throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'string');
 		}
 		
-		if ($className != '' && !class_exists($class_name, FALSE)) {
+		if ($className != '' && !class_exists($className, FALSE)) {
 			$mock = self::generate($className);
 			return self::getObject($mock['code'], $mock['mockClassName']);		
 		}
