@@ -7,7 +7,7 @@ use WideImage\img as img;
 class upload {
 	static $forbidden = array('php', 'php5', 'php4', 'php3', 'phtml', 'phpt');
 	
-	static function upload(Request $req) {
+	static function upload_file(Request $req) {
 		if(!isset($_SERVER['HTTP_X_UPLOADOBJECT_FILENAME'])) {
 			return array('status' => -1,
 							'errorMessage' => 'Invalid file upload request');

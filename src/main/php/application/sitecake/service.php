@@ -58,7 +58,7 @@ class service {
 	}
 	
 	static function upload(Request $req) {
-		return service::response($req->query(), upload::upload($req));	
+		return service::response($req->query(), upload::upload_file($req));	
 	}
 	
 	static function save(Request $req) {
