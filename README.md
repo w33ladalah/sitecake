@@ -1,9 +1,15 @@
 Welcome to SiteCake!
 ====================
 
-SiteCake is an easy to use, downloadable CMS (Content Managament System) with a WYSIWYG, in-place, drag & drop editor.
+SiteCake is an easy to use, downloadable CMS (Content Managament System) for small websites, with a WYSIWYG, in-place, drag&drop content editor.
 A standard web hosting (web server and PHP 5.3+) is all you need to install and use it.
 
-A new, SiteCake-based web site could be created using SiteCake themes. Every SiteCake theme is a plain static HTML site with few extra markups (special CSS class names) for editable regions within an HTML page. 
+More info could be found at [sitecake.com](http://sitecake.com). For documentation, check the [project's Wiki](http://github.com/sitecake/sitecake/wiki).
 
-More details could be found [here](http://sitecake.com).
+## Quick Start
+
+[Download](https://github.com/sitecake/sitecake/downloads) the latest SiteCake, grab a SiteCake Theme from 
+[here](http://github.com/sitecake/sitecake-themes/downloads), extract archives to your web hosting directory and you 
+should be ready to start editing. Just access http://yourdomain.com/sc-admin.php (default password is _admin_) and have fun!
+
+
