@@ -85,10 +85,8 @@ class content {
 	}
 	
 	static function fixXHTML($markup) {
-		$markup = DOMDocumentWrapper::expandEmptyTag('br', $markup);
-		$markup = DOMDocumentWrapper::expandEmptyTag('img', $markup);
-		$markup = DOMDocumentWrapper::expandEmptyTag('textarea', $markup);
-		return $markup;
+		return DOMDocumentWrapper::expandEmptyTag('img', 
+			preg_replace('/<br\\s*>/', '<br/>', $markup));
 	}
 	
 	static function publish_res($draft) {
