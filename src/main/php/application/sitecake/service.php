@@ -15,8 +15,7 @@ class service {
 					'INVALID_SERVICE_REQUEST', $_SERVER['REQUEST_URI'])));
 		}
 				
-		if (service::auth() || 
-				$action == 'login' || $action != 'change') {
+		if ($action == 'login' || $action == 'change' || service::auth()) {
 			ob_start();
 			try {
 				$res = service::$action($req);
