@@ -28,7 +28,7 @@ class upload {
 		}
 		
 		$id = util::id();
-		$file = $GLOBALS['DRAFT_CONTENT_DIR'] . DS . $id . 
+		$file = $GLOBALS['DRAFT_CONTENT_DIR'] . '/' . $id . 
 			($fileExt ? '.' . $fileExt : '');
 			
 		io::file_put_contents($file, io::file_get_contents("php://input"));
@@ -47,7 +47,7 @@ class upload {
 			if (isset($_SERVER['HTTP_X_IMAGEUPLOAD_THUMBDIM'])) {
 				$thumbnailDimension = $_SERVER['HTTP_X_IMAGEUPLOAD_THUMBDIM'];
 				$thumbId = util::id();
-				$thumbFile = $GLOBALS['DRAFT_CONTENT_DIR'] . DS . 
+				$thumbFile = $GLOBALS['DRAFT_CONTENT_DIR'] . '/' . 
 					$thumbId .	($fileExt ? '.' . $fileExt : '');
 				img::load($file);
 				img::resizeToDimension($thumbnailDimension);
@@ -69,7 +69,7 @@ class upload {
 					$_SERVER['HTTP_X_IMAGEUPLOAD_RESIZEWIDTH'] != 0 ) {
 				$resizedWidth = $_SERVER['HTTP_X_IMAGEUPLOAD_RESIZEWIDTH'];
 				$resizedId = util::id();
-				$resizedFile = $GLOBALS['DRAFT_CONTENT_DIR'] . DS .
+				$resizedFile = $GLOBALS['DRAFT_CONTENT_DIR'] . '/' .
 					$resizedId .	($fileExt ? '.' . $fileExt : '');
 				img::load($file);
 				if (img::getWidth() <= $resizedWidth) {

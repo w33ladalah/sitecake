@@ -28,7 +28,7 @@ class image {
 	
 		$id = util::id();
 		$name = $id . '.' . $info['ext'];
-		$dpath = $GLOBALS['DRAFT_CONTENT_DIR'] . DS . $name;
+		$dpath = $GLOBALS['DRAFT_CONTENT_DIR'] . '/' . $name;
 		image::transform_image($spath, $dpath, $data);
 		meta::put($id, array(
 							'orig' => util::rpath($spath),
@@ -45,8 +45,8 @@ class image {
 		return array(
 				'id' => reset(explode('.', end(explode('/', $url)))),
 				'ext' => end(explode('.', end(explode('/', $url)))),
-				'path' => $GLOBALS['SC_ROOT'] . DS . $url,
-				'name' => basename($GLOBALS['SC_ROOT'] . DS . $url)
+				'path' => $GLOBALS['SC_ROOT'] . '/' . $url,
+				'name' => basename($GLOBALS['SC_ROOT'] . '/' . $url)
 		);
 	}
 	

@@ -20,8 +20,8 @@ class util {
 	 * @return string relative path
 	 */
 	static function rpath($path) {
-		return (strpos($path, $GLOBALS['SC_ROOT'] . DS) === 0) ?
-			substr($path, strlen($GLOBALS['SC_ROOT'] . DS)) : $path;
+		return (strpos($path, $GLOBALS['SC_ROOT'] . '/') === 0) ?
+			substr($path, strlen($GLOBALS['SC_ROOT'] . '/')) : $path;
 	}
 	
 	/**
@@ -32,6 +32,6 @@ class util {
 	 * @return string absolute path
 	 */
 	static function apath($path) {
-		return $GLOBALS['SC_ROOT'] . DS . $path;
+		return $GLOBALS['SC_ROOT'] . '/' . $path;
 	}
 }

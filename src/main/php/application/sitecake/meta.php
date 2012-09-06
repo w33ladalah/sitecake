@@ -121,6 +121,6 @@ class meta {
 	}
 	
 	static function path() {
-		return $GLOBALS['DRAFT_CONTENT_DIR'] . DS . 'meta.data';
+		return $GLOBALS['DRAFT_CONTENT_DIR'] . '/' . 'meta.data';
 	}
 }

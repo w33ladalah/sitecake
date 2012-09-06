@@ -29,7 +29,7 @@ class draft {
 	
 	static function getAll($raw = false) {
 		$drafts = array();
-		$paths = io::glob($GLOBALS['DRAFT_CONTENT_DIR'] . DS . '*.drf');
+		$paths = io::glob($GLOBALS['DRAFT_CONTENT_DIR'] . '/' . '*.drf');
 		foreach ($paths as $path) {
 			$id = basename($path, '.drf');
 			$drafts[$id] = $raw ? 
@@ -39,6 +39,6 @@ class draft {
 	}
 	
 	static function path($id) {
-		return $GLOBALS['DRAFT_CONTENT_DIR'] . DS . $id . '.drf';
+		return $GLOBALS['DRAFT_CONTENT_DIR'] . '/' . $id . '.drf';
 	}
 }

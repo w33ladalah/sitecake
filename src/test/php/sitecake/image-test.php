@@ -19,14 +19,14 @@ class imageTest extends \PHPUnit_Framework_TestCaseExt {
 		$this->assertEquals(array(
 				'id' => '1234',
 				'ext' => 'jpg',
-				'path' => 'sc-test' . DS . 'sitecake-content/1234.jpg',
+				'path' => 'sc-test' . '/' . 'sitecake-content/1234.jpg',
 				'name' => '1234.jpg'
 			), 
 			image::image_info('sitecake-content/1234.jpg'));
 		$this->assertEquals(array(
 				'id' => '123',
 				'ext' => 'jpg',
-				'path' => 'sc-test' . DS . 'images/test/ui/123.4.jpg',
+				'path' => 'sc-test' . '/' . 'images/test/ui/123.4.jpg',
 				'name' => '123.4.jpg'
 			), 
 			image::image_info('images/test/ui/123.4.jpg'));

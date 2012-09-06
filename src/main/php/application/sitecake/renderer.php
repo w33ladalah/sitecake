@@ -61,7 +61,7 @@ class renderer {
 	static function pageFiles() {
 		$path = $GLOBALS['SC_ROOT'];
 		
-		$htmlFiles = io::glob($path . DS . '*.html');
+		$htmlFiles = io::glob($path . '/' . '*.html');
 	
 		if ($htmlFiles === false || empty($htmlFiles)) {
 			throw new Exception(
@@ -266,9 +266,9 @@ class renderer {
 		meta::remove($id);
 		$path = util::apath($meta['path']);
 		if (io::file_exists($path)) io::unlink($path);
-		$fpath = $GLOBALS['PUBLIC_FILES_DIR'] . DS . $meta['name'];
+		$fpath = $GLOBALS['PUBLIC_FILES_DIR'] . '/' . $meta['name'];
 		if (io::file_exists($fpath)) io::unlink($fpath);
-		$ipath = $GLOBALS['PUBLIC_IMAGES_DIR'] . DS . $meta['name'];
+		$ipath = $GLOBALS['PUBLIC_IMAGES_DIR'] . '/' . $meta['name'];
 		if (io::file_exists($ipath)) io::unlink($ipath);		
 	}
 	

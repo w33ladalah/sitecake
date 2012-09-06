@@ -41,6 +41,6 @@ class lock {
 	}
 	
 	static function path($name) {
-		return $GLOBALS['TEMP'] . DS . $name . '.lock';
+		return $GLOBALS['TEMP'] . '/' . $name . '.lock';
 	}
 }

@@ -1,5 +1,4 @@
 <?php
-define('DS', DIRECTORY_SEPARATOR);
 ini_set('display_errors','Off');
 ini_set('display_warnings', 'Off');
 date_default_timezone_set('UTC');
@@ -13,7 +12,7 @@ $GLOBALS['PUBLIC_IMAGES_DIR'] = $GLOBALS['SC_ROOT'] . '/images';
 $GLOBALS['PUBLIC_FILES_DIR'] = $GLOBALS['SC_ROOT'] . '/files';
 $GLOBALS['PUBLIC_IMAGES_URL'] = 'images';
 $GLOBALS['PUBLIC_FILES_URL'] = 'files';
-$GLOBALS['SITE_MAP_FILE'] = $GLOBALS['SC_ROOT'] . DS . 'sitemap.xml';
+$GLOBALS['SITE_MAP_FILE'] = $GLOBALS['SC_ROOT'] . '/' . 'sitemap.xml';
 
 $GLOBALS['SERVICE_URL.'] = 'sitecake/${project.version}/server/service.php';
 $GLOBALS['SITECAKE_EDITOR_LOGIN_URL'] =

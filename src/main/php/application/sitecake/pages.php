@@ -108,7 +108,7 @@ class pages {
 		phpQuery::pq('title', $doc)->html($page['title']);
 		renderer::savePageFile($path, (string)$doc);
 		if ($uri != $page['uri']) {
-			io::rename($path, $GLOBALS['SC_ROOT'] . DS . $uri);
+			io::rename($path, $GLOBALS['SC_ROOT'] . '/' . $uri);
 		}
 	}
 	
@@ -120,7 +120,7 @@ class pages {
 	
 	static function create_page($page, $doc, $navItems) {
 		$id = util::id();
-		$path = $GLOBALS['SC_ROOT'] . DS . $page['uri'];
+		$path = $GLOBALS['SC_ROOT'] . '/' . $page['uri'];
 		$nav = pages::gen_nav($navItems, $page['uri']);
 		phpQuery::pq('ul.sc-nav', $doc)->html($nav);
 		phpQuery::pq('title', $doc)->html($page['title']);

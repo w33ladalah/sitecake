@@ -110,8 +110,8 @@ class content {
 	
 	static function move_draft_res($names, $dpath) {
 		foreach ($names as $name) {
-			io::rename($GLOBALS['DRAFT_CONTENT_DIR'] . DS . $name, 
-				$dpath . DS . $name);
+			io::rename($GLOBALS['DRAFT_CONTENT_DIR'] . '/' . $name, 
+				$dpath . '/' . $name);
 		}	
 	}
 	

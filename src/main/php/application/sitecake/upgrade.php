@@ -25,7 +25,7 @@ class upgrade {
 	}
 	
 	static function latest_local() {
-		$versions = io::glob($GLOBALS['SC_ROOT'] . DS . 'sitecake' . DS . 
+		$versions = io::glob($GLOBALS['SC_ROOT'] . '/' . 'sitecake' . '/' . 
 			'*.*.*', GLOB_ONLYDIR);
 		return array_reduce($versions, function($latest, $item) {
 			$curr = upgrade::version($item);
@@ -52,7 +52,7 @@ class upgrade {
 			$ver . '-upgrade.zip';
 		$resp = client::get($url);
 		if ($resp->isSuccess()) {
-			$file = $GLOBALS['TEMP'] . DS . 'sitecake-' . $ver . '-upgrade.zip';
+			$file = $GLOBALS['TEMP'] . '/' . 'sitecake-' . $ver . '-upgrade.zip';
 			io::file_put_contents($file, $resp->getBody());
 			return $file;
 		} else {
@@ -62,7 +62,7 @@ class upgrade {
 	}
 	
 	static function extract($ver, $file) {
-		$dir = $GLOBALS['SC_ROOT'] . DS . 'sitecake';
+		$dir = $GLOBALS['SC_ROOT'] . '/' . 'sitecake';
 		if (class_exists('ZipArchive')) {
 			$res = upgrade::extract_ziparchive($file, $dir);
 		} else {
@@ -76,7 +76,7 @@ class upgrade {
 	
 	static function switch_to($ver) {
 		io::file_put_contents(
-			$GLOBALS['SC_ROOT'] . DS . 'sc-admin.php',
+			$GLOBALS['SC_ROOT'] . '/' . 'sc-admin.php',
 			"<?php include 'sitecake/$ver/server/admin.php';");	
 	}
 	
