@@ -46,7 +46,18 @@
 			<includes>
 				<include>**/*</include>
 			</includes>
-		</fileSet>		
+		</fileSet>
+		<fileSet>
+			<outputDirectory>/${project.version}/server/lib</outputDirectory>
+			<directory>src/main/lib</directory>
+			<directoryMode>0755</directoryMode>
+			<includes>
+				<include>**/*</include>
+			</includes>
+			<excludes>
+				<exclude>PHPUnit/**/*</exclude>
+			</excludes>
+		</fileSet>				
 	</fileSets>
   
 </assembly>
