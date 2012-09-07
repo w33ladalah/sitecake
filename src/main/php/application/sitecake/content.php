@@ -34,10 +34,6 @@ class content {
 			if (get_magic_quotes_gpc())
 				$content = stripcslashes($content);	
 			$content = base64_decode($content);
-			if (!empty($content)) {
-				$content = (string)(phpQuery::newDocumentXHTML(
-					content::fixXHTML($content)));
-			}
 			$draft[$container] = $content;		
 		}
 		draft::update($id, $draft);
@@ -82,11 +78,6 @@ class content {
 		}
 		draft::delete($id);
 		return array('status' => 0);
-	}
-	
-	static function fixXHTML($markup) {
-		return DOMDocumentWrapper::expandEmptyTag('img', 
-			preg_replace('/<br\\s*>/', '<br/>', $markup));
 	}
 	
 	static function publish_res($draft) {
