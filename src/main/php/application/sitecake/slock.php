@@ -1,30 +1,30 @@
 <?php
 namespace sitecake;
 
-class lock {
+class slock {
 	static function create($name, $timeout = 0) {
-		io::file_put_contents(lock::path($name), $timeout);
+		io::file_put_contents(slock::path($name), $timeout);
 	}
 	
 	static function reset($name) {
-		$path = lock::path($name);
+		$path = slock::path($name);
 		if (io::file_exists($path)) {
-			io::touch(lock::path($name));
+			io::touch(slock::path($name));
 		}		
 	}
 	
 	static function remove($name) {
-		$path = lock::path($name);
+		$path = slock::path($name);
 		if (io::file_exists($path)) {
 			io::unlink($path);
 		}
 	}
 	
 	static function exists($name) {
-		$file = lock::path($name);
+		$file = slock::path($name);
 		if (io::file_exists($file)) {
-			if (lock::timedout($file)) {
-				lock::remove($file);
+			if (slock::timedout($file)) {
+				slock::remove($file);
 				return false;
 			} else {
 				return true;

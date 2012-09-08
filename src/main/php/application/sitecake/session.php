@@ -30,13 +30,13 @@ class session {
 			return array('status' => 1);
 		}
 		
-		if (lock::exists('login')) {
+		if (slock::exists('login')) {
 			return array('status' => 2);
 		}
 		
 		session_start();
 		$_SESSION['loggedin'] = true;
-		lock::create('login', 20);
+		slock::create('login', 20);
 		return array('status' => 0);
 	}
 	
@@ -84,7 +84,7 @@ class session {
 		
     	if ($_SESSION['loggedin'] === true ) {
     		$_SESSION['loggedin'] = false;
-    		lock::remove('login');
+    		slock::remove('login');
     	}
     	return array('status' => 0);    	
 	}
@@ -103,7 +103,7 @@ class session {
 		session_start();
 		
     	if ($_SESSION['loggedin'] === true ) {
-    		lock::reset('login');
+    		slock::reset('login');
     	}
     	return array('status' => 0);    	
 	}
