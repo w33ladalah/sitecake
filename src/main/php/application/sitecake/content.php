@@ -83,27 +83,32 @@ class content {
 	static function publish_res($draft) {
 		$mod = array();
 		foreach ($draft as $container => $html) {
-			preg_match_all('/\\ssrc=("|\')' . $GLOBALS['DRAFT_CONTENT_URL'] . 
+			preg_match_all('/["\'\\s]' . $GLOBALS['DRAFT_CONTENT_URL'] . 
 				'\/([0-9abcdef]{40}\.[^"\'\\s]+)/', $html, $matches);
-			content::move_draft_res($matches[2], $GLOBALS['PUBLIC_IMAGES_DIR']);
-			preg_match_all('/\\shref=("|\')' . $GLOBALS['DRAFT_CONTENT_URL'] . 
-				'\/([0-9abcdef]{40}\.[^"\'\\s]+)/', $html, $matches);
-			content::move_draft_res($matches[2], $GLOBALS['PUBLIC_FILES_DIR']);
-			$h = preg_replace(
-				'/\\ssrc=("|\')' . $GLOBALS['DRAFT_CONTENT_URL'] . '\//', 
-				' src=$1' . $GLOBALS['PUBLIC_IMAGES_URL'] . '/', $html);
-			$mod[$container] = preg_replace(
-				'/\\shref=("|\')' . $GLOBALS['DRAFT_CONTENT_URL'] . '\//', 
-				' href=$1' . $GLOBALS['PUBLIC_FILES_URL'] . '/', $h);
+			$mod[$container] = content::move_draft_res($matches[1], $html);
 		}
 		return $mod;
 	}
 	
-	static function move_draft_res($names, $dpath) {
+	static function move_draft_res($names, $html) {
 		foreach ($names as $name) {
-			io::rename($GLOBALS['DRAFT_CONTENT_DIR'] . '/' . $name, 
-				$dpath . '/' . $name);
-		}	
+			$id = substr($name, 0, 40);
+			$image = meta::get($id, 'image');
+			$spath = $GLOBALS['DRAFT_CONTENT_DIR'] . '/' . $name;
+			$dpath = ($image ? 
+				$GLOBALS['PUBLIC_IMAGES_DIR'] : $GLOBALS['PUBLIC_FILES_DIR']) .
+				'/' . $name;
+			$durl = ($image ? 
+				$GLOBALS['PUBLIC_IMAGES_URL'] : $GLOBALS['PUBLIC_FILES_URL']) .
+				'/' . $id;
+			
+			$html = preg_replace('/' . $GLOBALS['DRAFT_CONTENT_URL'] . '\/' . 
+				$id . '/', $durl, $html);
+			
+			if (io::file_exists($spath))
+				io::rename($spath, $dpath);
+		}
+		return $html;
 	}
 	
 	static function repeaters($containers) {
