@@ -29,14 +29,15 @@ class upload {
 		io::file_put_contents($file, io::file_get_contents("php://input"));
 		meta::put($id, array(
 			'path' => util::rpath($file),
-			'name' => basename($file)
+			'name' => basename($file), 
+			'image' => isset($_SERVER['HTTP_X_IMAGE'])
 		));
 
 		$result = array('status' => 0);
 		$result['id'] = $id;
 		$result['url'] = $GLOBALS['DRAFT_CONTENT_URL'] . '/' . 
 			$id .	($fileExt ? '.' . $fileExt : '');
-		
+				
 		if (isset($_SERVER['HTTP_X_IMAGE']) && 
 				isset($_SERVER['HTTP_X_RESIZE_WIDTH']) && 
 				$_SERVER['HTTP_X_RESIZE_WIDTH'] != 0 ) {
@@ -60,7 +61,8 @@ class upload {
 				'orig' => util::rpath($file),
 				'oid'  => $id,
 				'path' => util::rpath($resizedFile),
-				'name' => basename($resizedFile)
+				'name' => basename($resizedFile),
+				'image' => true
 			));				
 		}		
 		
