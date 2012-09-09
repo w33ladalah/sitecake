@@ -34,4 +34,13 @@ class util {
 	static function apath($path) {
 		return $GLOBALS['SC_ROOT'] . '/' . $path;
 	}
+	
+	static function log($text) {
+		flock::acquire('log');
+		$f = io::fopen($GLOBALS['TEMP'] . '/log.txt', 'ab');
+		io::fwrite($f, $text, strlen($text));
+		io::fflush($f);
+		io::fclose($f);
+		flock::release('log');
+	}
 }
