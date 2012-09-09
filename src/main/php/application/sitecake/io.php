@@ -78,4 +78,8 @@ class io {
 	static function fwrite($handle, $string, $length = null) {
 		return fwrite($handle, $string, $length);
 	}
+	
+	static function fflush($handle) {
+		return fflush($handle);
+	}
 }
