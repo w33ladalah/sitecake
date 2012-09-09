@@ -16,7 +16,7 @@ class meta {
 	}
 	
 	static function load() {
-		meta::$dirty = false;
+		flock::acquire('meta');
 		$path = meta::path();
 		if (io::file_exists($path)) {
 			return json::decode(io::file_get_contents($path), json::TYPE_ARRAY);
@@ -30,6 +30,7 @@ class meta {
 			meta::$dirty = false;
 			io::file_put_contents(meta::path(), json::encode(meta::$data));
 		}
+		flock::release('meta');
 	}
 	
 	/**
