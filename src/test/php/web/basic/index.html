@@ -7,6 +7,45 @@
 <script type="text/javascript" src="js/script.js"></script>
 <link rel="stylesheet" href="css/style.css" type="text/css">
 <link rel="stylesheet" href="css/sitecake.css" type="text/css">
+<link rel="stylesheet" href="js/flexslider.css" type="text/css"/>
+<script src="js/jquery.flexslider.js"></script>
+<script type="text/javascript" charset="utf-8">
+	var horizontalSliderOpts = {
+		animation: 'slide',
+		direction: 'horizontal',
+		slideshowSpeed: 4000
+	};	
+	
+	var verticalSliderOpts = {
+		animation: 'slide',
+		direction: 'vertical'
+	};
+	
+	function initSliders() {
+		$('.sc-slider.vertical .flexslider').flexslider(verticalSliderOpts);
+		$('.sc-slider').not('.vertical').find('.flexslider').flexslider(horizontalSliderOpts);
+	}
+	
+	function reinitSlider(slider, markup) {
+		var opts = $(slider).hasClass('vertical') ? verticalSliderOpts : horizontalSliderOpts;
+		$(slider).html(markup);
+		$(slider).find('.flexslider').flexslider(opts);
+	}
+	
+	$(window).load(function() {
+		initSliders();
+		$(document).bind('scSliderInit', function(e) {
+			reinitSlider(e.originalEvent.detail.target, e.originalEvent.detail.markup);
+    	});
+  });
+</script>
+<style type="text/css">
+
+.sc-content div.sc-slider.vertical {
+	display: block;
+}
+
+</style>
 </head>
 <body>
 	<div>
@@ -19,7 +58,7 @@
 	<div>
 		<img alt="test image" src="images/beach.jpg">
 	</div>
-	<div class="main-column sc-content">
+	<div class="main-column sc-content" style="width:350px;">
 		<p>Some content text</p>
 		<img alt="test image" src="images/beach.jpg">
 	</div>
