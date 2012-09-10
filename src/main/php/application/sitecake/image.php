@@ -35,7 +35,8 @@ class image {
 							'oid'  => $info['id'],
 							'path' => util::rpath($dpath),
 							'name' => $name,
-							'data' => $data
+							'data' => $data,
+							'image' => true
 		));
 		return array('status' => 0, 
 			'url' => $GLOBALS['DRAFT_CONTENT_URL'] . '/' . $name);
