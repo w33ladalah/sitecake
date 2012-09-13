@@ -59,7 +59,7 @@ class renderer {
 	}
 	
 	static function pageFiles() {
-		$path = $GLOBALS['SC_ROOT'];
+		$path = SC_ROOT;
 		
 		$htmlFiles = io::glob($path . '/' . '*.html');
 	
@@ -185,14 +185,14 @@ class renderer {
 			"editMode: false, " .
 			"sessionId: '<session id>', " .
 			"serverVersionId: 'SiteCake CMS ${project.version}', " .
-			"sessionServiceUrl:'" . $GLOBALS['SERVICE_URL.'] . "', " .
-			"configUrl:'" . $GLOBALS['CONFIG_URL.'] . "', " .
+			"sessionServiceUrl:'" . SERVICE_URL . "', " .
+			"configUrl:'" . CONFIG_URL . "', " .
 			"forceLoginDialog: true" .
 		"};";
 				
 		return 
 			renderer::wrapToScriptTag($globals) .
-			renderer::scriptTag($GLOBALS['SITECAKE_EDITOR_LOGIN_URL']);
+			renderer::scriptTag(SITECAKE_EDITOR_LOGIN_URL);
 	}
 	
 	static function clientCodeEdit($isDraft) {
@@ -200,17 +200,17 @@ class renderer {
 			"editMode: true, " .
 			"sessionId: '<session id>', " .
 			"serverVersionId: 'SiteCake CMS ${project.version}', " .
-			"sessionServiceUrl:'" . $GLOBALS['SERVICE_URL.'] . "', " .
-			"uploadServiceUrl:'" . $GLOBALS['SERVICE_URL.'] . "', " .
-			"contentServiceUrl:'" . $GLOBALS['SERVICE_URL.'] . "', " .
-			"configUrl:'" . $GLOBALS['CONFIG_URL.'] . "', " .				
+			"sessionServiceUrl:'" . SERVICE_URL . "', " .
+			"uploadServiceUrl:'" . SERVICE_URL . "', " .
+			"contentServiceUrl:'" . SERVICE_URL . "', " .
+			"configUrl:'" . CONFIG_URL . "', " .				
 			"draftPublished: " . ($isDraft ? 'false' : 'true') .
 		"};";
 				
 		return
 			'<meta http-equiv="X-UA-Compatible" content="chrome=1">' .
 			renderer::wrapToScriptTag($globals) .
-			renderer::scriptTag($GLOBALS['SITECAKE_EDITOR_EDIT_URL']);
+			renderer::scriptTag(SITECAKE_EDITOR_EDIT_URL);
 	}
 	
 	static function wrapToScriptTag($code) {
@@ -266,9 +266,9 @@ class renderer {
 		meta::remove($id);
 		$path = util::apath($meta['path']);
 		if (io::file_exists($path)) io::unlink($path);
-		$fpath = $GLOBALS['PUBLIC_FILES_DIR'] . '/' . $meta['name'];
+		$fpath = PUBLIC_FILES_DIR . '/' . $meta['name'];
 		if (io::file_exists($fpath)) io::unlink($fpath);
-		$ipath = $GLOBALS['PUBLIC_IMAGES_DIR'] . '/' . $meta['name'];
+		$ipath = PUBLIC_IMAGES_DIR . '/' . $meta['name'];
 		if (io::file_exists($ipath)) io::unlink($ipath);		
 	}
 	

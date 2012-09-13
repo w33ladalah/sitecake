@@ -20,8 +20,8 @@ class util {
 	 * @return string relative path
 	 */
 	static function rpath($path) {
-		return (strpos($path, $GLOBALS['SC_ROOT'] . '/') === 0) ?
-			substr($path, strlen($GLOBALS['SC_ROOT'] . '/')) : $path;
+		return (strpos($path, SC_ROOT . '/') === 0) ?
+			substr($path, strlen(SC_ROOT . '/')) : $path;
 	}
 	
 	/**
@@ -32,12 +32,12 @@ class util {
 	 * @return string absolute path
 	 */
 	static function apath($path) {
-		return $GLOBALS['SC_ROOT'] . '/' . $path;
+		return SC_ROOT . '/' . $path;
 	}
 	
 	static function log($text) {
 		flock::acquire('log');
-		$f = io::fopen($GLOBALS['TEMP'] . '/log.txt', 'ab');
+		$f = io::fopen(TEMP_DIR . '/log.txt', 'ab');
 		io::fwrite($f, $text, strlen($text));
 		io::fflush($f);
 		io::fclose($f);

@@ -16,7 +16,7 @@ class upgradeTest extends \PHPUnit_Framework_TestCaseExt {
 	}
 	
 	public function test_latest_local() {
-		$GLOBALS['SC_ROOT'] = '';
+		define('SC_ROOT', '');
 		io::staticExpects($this->any())
               ->method('glob')
               ->will($this->returnValue(

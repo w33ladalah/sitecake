@@ -1,6 +1,6 @@
 <?php
 include('bootstrap.php');
-include($GLOBALS['CREDENTIALS_FILE']);
+include(CREDENTIALS_FILE);
 
 use sitecake\http,
 	sitecake\service;

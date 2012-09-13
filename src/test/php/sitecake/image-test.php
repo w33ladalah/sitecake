@@ -15,7 +15,7 @@ class imageTest extends \PHPUnit_Framework_TestCaseExt {
 	}
 	
 	function test_image_info() {
-		$GLOBALS['SC_ROOT'] = 'sc-test';
+		define('SC_ROOT', 'sc-test');
 		$this->assertEquals(array(
 				'id' => '1234',
 				'ext' => 'jpg',

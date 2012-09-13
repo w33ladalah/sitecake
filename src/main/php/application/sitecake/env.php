@@ -4,11 +4,11 @@ namespace sitecake;
 class env {
 	static function ensure() {
 		return array_merge(array(), 
-			env::ensureDirectory($GLOBALS['SC_ROOT'], false, true),
-			env::ensureDirectory($GLOBALS['DRAFT_CONTENT_DIR']),
-			env::ensureDirectory($GLOBALS['PUBLIC_IMAGES_DIR']),
-			env::ensureDirectory($GLOBALS['PUBLIC_FILES_DIR']),
-			env::ensureDirectory($GLOBALS['TEMP']),
+			env::ensureDirectory(SC_ROOT, false, true),
+			env::ensureDirectory(DRAFT_CONTENT_DIR),
+			env::ensureDirectory(PUBLIC_IMAGES_DIR),
+			env::ensureDirectory(PUBLIC_FILES_DIR),
+			env::ensureDirectory(TEMP_DIR),
 			env::checkSitemap());
 		
 	}
@@ -49,7 +49,7 @@ class env {
 	 */
 	static function checkSitemap() {
 		$errors = array();
-		$path = $GLOBALS['SITE_MAP_FILE'];
+		$path = SITE_MAP_FILE;
 		if (io::file_exists($path) && !io::is_writable($path)) {
 			array_push($errors, resources::message('FILE_NOT_WRITABLE', $path));
 		}

@@ -8,7 +8,7 @@ class utilTest extends \PHPUnit_Framework_TestCaseExt {
 	}
 
 	function test_rpath() {
-		$GLOBALS['SC_ROOT'] = '/some/path';
+		define('SC_ROOT', '/some/path');
 		$this->assertEquals('and/relative/path', 
 			util::rpath('/some/path/and/relative/path'));
 		$this->assertEquals('/some/other/path',

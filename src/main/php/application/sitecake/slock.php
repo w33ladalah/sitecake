@@ -41,6 +41,6 @@ class slock {
 	}
 	
 	static function path($name) {
-		return $GLOBALS['TEMP'] . '/' . $name . '.lock';
+		return TEMP_DIR . '/' . $name . '.lock';
 	}
 }

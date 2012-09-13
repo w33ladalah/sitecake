@@ -8,7 +8,7 @@ class metaTest extends \PHPUnit_Framework_TestCaseExt {
 	}
 
 	function test_path() {
-		$GLOBALS['DRAFT_CONTENT_DIR'] = 'draft-dir';
+		define('DRAFT_CONTENT_DIR', 'draft-dir');
 		$this->assertEquals('draft-dir' . '/' . 'meta.data', meta::path());
 	}
 	

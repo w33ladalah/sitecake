@@ -83,7 +83,7 @@ class content {
 	static function publish_res($draft) {
 		$mod = array();
 		foreach ($draft as $container => $html) {
-			preg_match_all('/["\'\\s]' . $GLOBALS['DRAFT_CONTENT_URL'] . 
+			preg_match_all('/["\'\\s]' . DRAFT_CONTENT_URL . 
 				'\/([0-9abcdef]{40}\.[^"\'\\s]+)/', $html, $matches);
 			$mod[$container] = content::move_draft_res($matches[1], $html);
 		}
@@ -94,15 +94,15 @@ class content {
 		foreach ($names as $name) {
 			$id = substr($name, 0, 40);
 			$image = meta::get($id, 'image');
-			$spath = $GLOBALS['DRAFT_CONTENT_DIR'] . '/' . $name;
+			$spath = DRAFT_CONTENT_DIR . '/' . $name;
 			$dpath = ($image ? 
-				$GLOBALS['PUBLIC_IMAGES_DIR'] : $GLOBALS['PUBLIC_FILES_DIR']) .
+				PUBLIC_IMAGES_DIR : PUBLIC_FILES_DIR) .
 				'/' . $name;
 			$durl = ($image ? 
-				$GLOBALS['PUBLIC_IMAGES_URL'] : $GLOBALS['PUBLIC_FILES_URL']) .
+				PUBLIC_IMAGES_URL : PUBLIC_FILES_URL) .
 				'/' . $id;
 			
-			$html = preg_replace('/' . $GLOBALS['DRAFT_CONTENT_URL'] . '\/' . 
+			$html = preg_replace('/' . DRAFT_CONTENT_URL . '\/' . 
 				$id . '/', $durl, $html);
 			
 			if (io::file_exists($spath))

@@ -23,7 +23,7 @@ class upload {
 		}
 		
 		$id = util::id();
-		$file = $GLOBALS['DRAFT_CONTENT_DIR'] . '/' . $id . 
+		$file = DRAFT_CONTENT_DIR . '/' . $id . 
 			($fileExt ? '.' . $fileExt : '');
 			
 		io::file_put_contents($file, io::file_get_contents("php://input"));
@@ -35,7 +35,7 @@ class upload {
 
 		$result = array('status' => 0);
 		$result['id'] = $id;
-		$result['url'] = $GLOBALS['DRAFT_CONTENT_URL'] . '/' . 
+		$result['url'] = DRAFT_CONTENT_URL . '/' . 
 			$id .	($fileExt ? '.' . $fileExt : '');
 				
 		if (isset($_SERVER['HTTP_X_IMAGE']) && 
@@ -43,7 +43,7 @@ class upload {
 				$_SERVER['HTTP_X_RESIZE_WIDTH'] != 0 ) {
 			$resizedWidth = $_SERVER['HTTP_X_RESIZE_WIDTH'];
 			$resizedId = util::id();
-			$resizedFile = $GLOBALS['DRAFT_CONTENT_DIR'] . '/' .
+			$resizedFile = DRAFT_CONTENT_DIR . '/' .
 				$resizedId .	($fileExt ? '.' . $fileExt : '');
 			img::load($file);
 			if (img::getWidth() <= $resizedWidth) {
@@ -52,7 +52,7 @@ class upload {
 				img::resizeToWidth($resizedWidth);
 				img::save($resizedFile);
 			}
-			$result['resizedUrl'] = $GLOBALS['DRAFT_CONTENT_URL'] . '/' . 
+			$result['resizedUrl'] = DRAFT_CONTENT_URL . '/' . 
 				$resizedId .	($fileExt ? '.' . $fileExt : '');
 			$result['resizedWidth'] = img::getWidth();
 			$result['resizedHeight'] = img::getHeight();

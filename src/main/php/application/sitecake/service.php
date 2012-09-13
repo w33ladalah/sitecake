@@ -76,7 +76,7 @@ class service {
 		$params = $req->post();
 		return service::response($req->query(), 
 			isset($params['pages']) ? pages::update(json::decode(
-				$params['pages'], json::TYPE_ARRAY)) : pages::all());
+				$params['pages'], json::TYPE_ARRAY)) : pages::get());
 	}
 	
 	static function image_transform(Request $req) {

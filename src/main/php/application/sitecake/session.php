@@ -63,7 +63,7 @@ class session {
 		if ( $crdnt != $credential ) {
 			return array('status' => 1);
 		}
-		file_put_contents($GLOBALS['CREDENTIALS_FILE'], 
+		file_put_contents(CREDENTIALS_FILE, 
 			'<?php $credential = "'.$newCredential.'"; ?>');
 		
 		return array('status' => 0);

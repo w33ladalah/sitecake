@@ -4,7 +4,8 @@ namespace sitecake;
 use phpQuery\phpQuery as phpQuery;
 
 class pages {
-	static function all() {
+	
+	static function get() {
 		$pages = array();
 		$pageFiles = renderer::pageFiles();
 	
@@ -16,16 +17,16 @@ class pages {
 			$home = ($uri == 'index.html');
 			$html = $home ? $homeHtml : renderer::loadPageFile($path);
 			$pageDoc = $home ? $homeDoc : phpQuery::newDocument($html);
-			$navidx = array_search($uri, $nav);
+			$idx = array_search($uri, $nav);
 			array_push($pages, array(
 				'id' => renderer::pageId($pageDoc, $path),
-				'idx' => ($navidx === FALSE) ? -1 : $navidx,
+				'idx' => ($navidx === FALSE) ? -1 : $idx,
 				'title' => phpQuery::pq('title', $pageDoc)->text(),
 				'home' => $home,
 				'uri' => $uri
 			));			
 		}
-		return $pages;
+		return array('status' => 0, 'pages' => $pages);
 	}
 	
 	static function update($pages) {
@@ -48,6 +49,7 @@ class pages {
 		}
 		
 		pages::sitemap($pages);
+		return array('status' => 0);
 	}
 	
 	static function nav_items($doc) {
@@ -108,7 +110,7 @@ class pages {
 		phpQuery::pq('title', $doc)->html($page['title']);
 		renderer::savePageFile($path, (string)$doc);
 		if ($uri != $page['uri']) {
-			io::rename($path, $GLOBALS['SC_ROOT'] . '/' . $uri);
+			io::rename($path, SC_ROOT . '/' . $uri);
 		}
 	}
 	
@@ -120,7 +122,7 @@ class pages {
 	
 	static function create_page($page, $doc, $navItems) {
 		$id = util::id();
-		$path = $GLOBALS['SC_ROOT'] . '/' . $page['uri'];
+		$path = SC_ROOT . '/' . $page['uri'];
 		$nav = pages::gen_nav($navItems, $page['uri']);
 		phpQuery::pq('ul.sc-nav', $doc)->html($nav);
 		phpQuery::pq('title', $doc)->html($page['title']);
@@ -130,7 +132,7 @@ class pages {
 	}
 	
 	static function sitemap($pages) {
-		io::file_put_contents($GLOBALS['SITE_MAP_FILE'], 
+		io::file_put_contents(SITE_MAP_FILE, 
 			pages::gen_sitemap($pages));
 	}
 
@@ -149,4 +151,5 @@ class pages {
 		}
 		return $result . '</urlset>';		
 	}
+
 }
