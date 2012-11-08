@@ -9,6 +9,7 @@ class env {
 			env::ensureDirectory(PUBLIC_IMAGES_DIR),
 			env::ensureDirectory(PUBLIC_FILES_DIR),
 			env::ensureDirectory(TEMP_DIR),
+			env::ensureFilesWritable(),
 			env::checkSitemap());
 		
 	}
@@ -37,6 +38,23 @@ class env {
 		if ($writable && !io::is_writable($path)) {
 			array_push($errors, 
 				resources::message('DIR_NOT_WRITABLE', $path));
+		}
+
+		return $errors;
+	}
+
+	/** 
+	 * Check write permission of file's template.
+	 * 
+	 * @return array with error text messages
+	 */
+	static function ensureFilesWritable() {
+		$errors = array();
+
+		foreach ($pageFiles = renderer::pageFiles() as $pageFile) {
+			if (!io::is_writable($pageFile)) {
+				array_push($errors, resources::message('FILE_NOT_WRITABLE', $pageFile));
+			}
 		}
 
 		return $errors;
