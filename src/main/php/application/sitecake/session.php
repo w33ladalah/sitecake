@@ -80,13 +80,11 @@ class session {
 	 * @return array the service response
 	 */
 	static function logout() {
-		session_start();
-		
-    	if ($_SESSION['loggedin'] === true ) {
-    		$_SESSION['loggedin'] = false;
-    		slock::remove('login');
-    	}
-    	return array('status' => 0);    	
+		if ($_SESSION['loggedin'] === true ) {
+    			$_SESSION['loggedin'] = false;
+    			slock::remove('login');
+	    	}
+    		return array('status' => 0);    	
 	}
 	
 	/**
@@ -100,12 +98,9 @@ class session {
 	 * @return array the service response
 	 */
 	static function alive() {
-		session_start();
-		
-    	if ($_SESSION['loggedin'] === true ) {
-    		slock::reset('login');
-    	}
-    	return array('status' => 0);    	
-	}
-	
+	    	if ($_SESSION['loggedin'] === true ) {
+	    		slock::reset('login');
+	    	}
+	    	return array('status' => 0);    	
+	}	
 }

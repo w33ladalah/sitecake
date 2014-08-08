@@ -8,7 +8,7 @@ use Zend\Http\Request as Request;
 class service {
 	
 	static function execute($action, Request $req) {
-		if ($action == null && empty($ation) && 
+		if ($action === null || empty($action) || 
 				!method_exists('\sitecake\service', $action)) {
 			return service::response($req->getQuery(),
 				array('status' => -1, 'errorMessage' => resources::message(
