@@ -40,7 +40,7 @@ class renderer {
 	}
 		
 	static function isLoggedin() {
-		if ( isset($_COOKIE['PHPSESSID']) ) { 
+		if ( isset($_COOKIE[ session::sessionName() ]) ) {
 			session_start();
 			return (isset($_SESSION['loggedin']) && 
 				$_SESSION['loggedin'] === true);

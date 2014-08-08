@@ -86,7 +86,15 @@ class session {
 	    	}
     		return array('status' => 0);    	
 	}
-	
+
+	/**
+	 * Returns session name that is set in php.ini (default: PHPSESSID)
+	 *
+	 * @return string - session name
+	 */
+	static function sessionName() {
+		return session_name();
+	}
 	/**
 	 * Refreshes the admin session by resetting the session timeout timer.
 	 *
