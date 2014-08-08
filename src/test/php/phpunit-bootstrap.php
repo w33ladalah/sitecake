@@ -1,6 +1,10 @@
 <?php
 
-define('DS', DIRECTORY_SEPARATOR);
+require('vendor/autoload.php');
+
+if (!defined('DS')) {
+	define('DS', DIRECTORY_SEPARATOR);
+}
 
 spl_autoload_register(function($className)
 {

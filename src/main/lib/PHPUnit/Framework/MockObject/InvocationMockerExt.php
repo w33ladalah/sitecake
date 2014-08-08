@@ -38,5 +38,11 @@ class PHPUnit_Framework_MockObject_InvocationMockerExt extends PHPUnit_Framework
 		}
 	
 		return array('hasReturnValue' => $hasReturnValue, 'returnValue' => $returnValue);
-	}	
+	}
+	
+	public function cleanup()
+	{
+		$this->matchers = array();
+		$this->builderMap = array();
+	}
 }

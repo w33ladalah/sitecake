@@ -46,3 +46,15 @@
         self::$staticInvocationMocker = NULL;
         $this->invocationMocker       = NULL;
     }
+    
+    public static function phpunit_verify()
+    {
+    	self::__phpunit_getStaticInvocationMocker()->verify();
+    }
+    
+    public static function phpunit_cleanup()
+    {
+        self::$staticInvocationMocker = NULL;    
+
+    }
+ 

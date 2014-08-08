@@ -1,7 +1,7 @@
 <?php
 namespace sitecake;
 
-use \phpQuery\phpQuery as phpQuery;
+use \phpQuery as phpQuery;
 use \phpQuery\DOMDocumentWrapper as DOMDocumentWrapper;
 use \WideImage\img as img;
 use \Zend\Json\Json as json;

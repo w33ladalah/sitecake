@@ -3,7 +3,7 @@ namespace sitecake;
 
 use Zend\Http\PhpEnvironment\Request,
 	Zend\Http\PhpEnvironment\Response,
-	phpQuery\phpQuery;
+	\phpQuery;
 
 use \Exception as Exception;
 
@@ -28,8 +28,9 @@ class renderer {
 	 */
 	static function response($req) {
 		$pageFiles = renderer::pageFiles();		
-		$pageUri = renderer::pageUri($req->query());
+		$pageUri = renderer::pageUri($req->getQuery());
 		if (array_key_exists($pageUri, $pageFiles)) {
+			renderer::normalize_pages($pageFiles);
 			return renderer::assemble(
 				$pageFiles[$pageUri], 
 				!renderer::isLoggedin());
@@ -59,36 +60,35 @@ class renderer {
 	}
 	
 	static function pageFiles() {
-		$path = SC_ROOT;
-		
-		$htmlFiles = io::glob($path . '/' . '*.html');
+		$pages = pages::page_files();
 	
-		if ($htmlFiles === false || empty($htmlFiles)) {
+		if ($pages === false || empty($pages)) {
 			throw new Exception(
-				resources::message('NO_PAGE_EXISTS', $path));
+				resources::message('NO_PAGE_EXISTS', SC_ROOT));
 		}
 		
-		$pageFiles = array();
-		foreach ($htmlFiles as $htmlFile) {
-			$pageFiles[basename($htmlFile)] = $htmlFile;
-		}
-		
-		if (!array_key_exists('index.html', $pageFiles)) {
+		if (!array_key_exists('index.html', $pages)) {
 			throw new Exception(
-				resources::message('INDEX_PAGE_NOT_EXISTS', $path));
+				resources::message('INDEX_PAGE_NOT_EXISTS', SC_ROOT));
 		}
 				
-		return $pageFiles;
+		return $pages;
 	}
 	
-	static function loadPageFile($path) {
+	static function load_page($path) {
 		if (!io::is_readable($path))
 			throw new Exception(resources::message('PAGE_NOT_EXISTS', $path));
 		return io::file_get_contents($path);
 	}
 	
-	static function savePageFile($path, $content) {
+	static function save_page($path, $content) {
 		io::file_put_contents($path, $content);
+	}
+	
+	static function normalize_pages($pages) {
+		array_walk($pages, function($path) {
+			renderer::normalize_page_id($path);
+		});
 	}
 	
 	/**
@@ -99,15 +99,16 @@ class renderer {
 	 * @return Response
 	 */
 	static function assemble($pageFile, $isLogin) {
-		$tpl = phpQuery::newDocument(renderer::loadPageFile($pageFile));
-		renderer::adjustNavMenu($tpl);
-		renderer::normalizeContainerNames($tpl);
+		$html = renderer::load_page($pageFile);
+		$doc = phpQuery::newDocument($html);
+		renderer::adjustNavMenu($doc);
+		renderer::normalizeContainerNames($doc);
 		if (!$isLogin) {
-			renderer::injectDraftContent($tpl, 
-				draft::get(renderer::pageId($tpl, $pageFile)));
+			renderer::injectDraftContent($doc, 
+				draft::get(pages::page_id($html)));
 		}
-		renderer::injectClientCode($tpl, $pageFile, $isLogin);
-		return http::response($tpl);
+		renderer::injectClientCode($doc, $html, $isLogin);
+		return http::response($doc);
 	}
 	
 	static function normalizeContainerNames($tpl) {
@@ -168,10 +169,10 @@ class renderer {
 		return $tpl;
 	}
 	
-	static function injectClientCode($tpl, $pageFile, $isLogin) {
-		$pageId = renderer::pageId($tpl, $pageFile);
+	static function injectClientCode($tpl, $html, $isLogin) {
+		$id = pages::page_id((string)$tpl);
 		phpQuery::pq('head', $tpl)->append(
-			renderer::clientCode($isLogin, draft::exists($pageId)));	
+			renderer::clientCode($isLogin, draft::exists($id)));	
 		return $tpl;
 	}
 	
@@ -184,7 +185,7 @@ class renderer {
 		$globals = "var sitecakeGlobals = {".
 			"editMode: false, " .
 			"sessionId: '<session id>', " .
-			"serverVersionId: 'SiteCake CMS ${project.version}', " .
+			"serverVersionId: 'SiteCake CMS ${version}', " .
 			"sessionServiceUrl:'" . SERVICE_URL . "', " .
 			"configUrl:'" . CONFIG_URL . "', " .
 			"forceLoginDialog: true" .
@@ -199,7 +200,7 @@ class renderer {
 		$globals = "var sitecakeGlobals = {".
 			"editMode: true, " .
 			"sessionId: '<session id>', " .
-			"serverVersionId: 'SiteCake CMS ${project.version}', " .
+			"serverVersionId: 'SiteCake CMS ${version}', " .
 			"sessionServiceUrl:'" . SERVICE_URL . "', " .
 			"uploadServiceUrl:'" . SERVICE_URL . "', " .
 			"contentServiceUrl:'" . SERVICE_URL . "', " .
@@ -232,19 +233,22 @@ class renderer {
 		return $tpl;
 	}
 	
-	static function pageId($tpl, $pageFile) {
-		if (preg_match('/\\s+scpageid="([^"]+)"/', 
-				(string)(phpQuery::pq('head', $tpl)->html()), $matches)) {
-			return $matches[1];
-		} else {
-			$id = util::id();
-			$origTpl = phpQuery::newDocument(renderer::loadPageFile($pageFile));
-			phpQuery::pq('head', $origTpl)->append(
-				renderer::wrapToScriptTag('var scpageid="' . $id . '";'));
-			phpQuery::pq('head', $tpl)->append(
-				renderer::wrapToScriptTag('var scpageid="' . $id . '";'));
-			renderer::savePageFile($pageFile, (string)$origTpl);
-			return $id;
+	/**
+	 * Ensures that the given page has the <code>scpageid</code>. If the 
+	 * <code>scpageid</code> is not present, a new ID value will be generated
+	 * and the page will be modified.
+	 *
+	 * @param string $path the page file path
+	 * @param string $html the page html (optional), if the html is ommited, the
+	 * 	page html will be loaded using the given path
+	 */
+	static function normalize_page_id($path, $html = null) {
+		$html = ($html == null) ? renderer::load_page($path) : $html;
+		$id = pages::page_id($html);
+		if (!$id) {
+			$code = renderer::wrapToScriptTag('var scpageid="'.util::id().'";');
+			renderer::save_page($path, 
+				preg_replace('/<\/head([^>]*)>/i', $code.'</head\1>', $html)); 
 		}
 	}
 	

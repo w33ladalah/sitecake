@@ -1,7 +1,7 @@
 <?php
 namespace sitecake;
 
-use \phpQuery\phpQuery as phpQuery;
+use \phpQuery as phpQuery;
 use \phpQuery\DOMDocumentWrapper as DOMDocumentWrapper;
 use \WideImage\img as img;
 use \Zend\Json\Json as json;
@@ -67,7 +67,7 @@ class content {
 				renderer::normalizeContainerNames($tpl);
 				renderer::injectDraftContent($tpl, $draft);
 				renderer::cleanupContainerNames($tpl);
-				renderer::savePageFile($pageFile, (string)$tpl);
+				renderer::save_page($pageFile, (string)$tpl);
 				$repeaters = content::repeaters($draft);
 				if (!empty($repeaters)) {
 					content::pass_repeaters($pageFiles, $pageFile, $repeaters);
@@ -129,7 +129,7 @@ class content {
 				renderer::normalizeContainerNames($tpl);
 				renderer::injectDraftContent($tpl, $repeaters);
 				renderer::cleanupContainerNames($tpl);
-				renderer::savePageFile($pageFile, (string)$tpl);
+				renderer::save_page($pageFile, (string)$tpl);
 			}			
 		}
 	}

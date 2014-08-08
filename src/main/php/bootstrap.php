@@ -13,11 +13,11 @@ define('PUBLIC_FILES_DIR', SC_ROOT . '/files');
 define('PUBLIC_IMAGES_URL', 'images');
 define('PUBLIC_FILES_URL', 'files');
 define('SITE_MAP_FILE', SC_ROOT . '/' . 'sitemap.xml');
-
-define('SERVICE_URL', 'sitecake/${project.version}/server/service.php');
+define('SERVER_BASE', 'sitecake/${version}/server');
+define('SERVICE_URL', SERVER_BASE . '/service.php');
 define('SITECAKE_EDITOR_LOGIN_URL', 'sitecake/' .
-	'${project.version}/client/publicmanager/publicmanager.nocache.js');
-define('SITECAKE_EDITOR_EDIT_URL', 'sitecake/${project.version}/client/' .
+	'${version}/client/publicmanager/publicmanager.nocache.js');
+define('SITECAKE_EDITOR_EDIT_URL', 'sitecake/${version}/client/' .
 	'contentmanager/contentmanager.nocache.js');
 define('CONFIG_URL', 'sitecake/editor.cfg');
 define('CREDENTIALS_FILE', realpath(__DIR__ . '/../../credential.php'));
@@ -28,6 +28,8 @@ set_include_path(
 	SERVER_DIR . '/application' . PATH_SEPARATOR .
 	SERVER_DIR . '/lib'
 );
+
+require('vendor/autoload.php');
 
 spl_autoload_register(
 	function($className) {

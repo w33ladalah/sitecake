@@ -43,7 +43,7 @@ class http {
 				<body><h1>Internal Server Error</h1>' . $error . 
 				'</body></html>');
 	}
-	
+
 	/**
 	 * 
 	 * Enter description here ...
@@ -51,5 +51,12 @@ class http {
 	 */
 	static function send($response) {
 		$response->send();
-	}	
+	}
+
+	static function baseUrl() {
+		$base = http::$req->getBasePath();
+		return http::$req->uri()->getScheme().'://'.
+			http::$req->uri()->getHost().
+			substr($base, 0, strlen($base) - strlen(SERVER_BASE));
+	}
 }
