@@ -1,8 +1,8 @@
 <?php
 namespace sitecake;
 
-use Zend\Http\Request as Request;
-use WideImage\img as img;
+use \Zend\Http\Request as Request;
+use \wideimage\img as img;
 
 class upload {
 	static $forbidden = array('php', 'php5', 'php4', 'php3', 'phtml', 'phpt');

@@ -20,7 +20,6 @@ class util {
 	 * @return string relative path
 	 */
 	static function rpath($path) {
-echo "rpath: " . SC_ROOT . "\n";
 		return (strpos($path, SC_ROOT . '/') === 0) ?
 			substr($path, strlen(SC_ROOT . '/')) : $path;
 	}

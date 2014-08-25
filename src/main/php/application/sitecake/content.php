@@ -3,7 +3,7 @@ namespace sitecake;
 
 use \phpQuery as phpQuery;
 use \phpQuery\DOMDocumentWrapper as DOMDocumentWrapper;
-use \WideImage\img as img;
+use \wideimage\img as img;
 use \Zend\Json\Json as json;
 
 class content {
