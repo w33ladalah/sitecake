@@ -1,0 +1,29 @@
+{
+	"name": "sitecake/sitecake-cms",
+    "description": "SiteCake - a simple, drag and drop CMS",
+	"version": "2.0.3",
+    "type": "project",
+    "keywords": [ "cms" ],
+    "homepage": "http://sitecake.com",
+    "licence": "GPL-3.0+",
+
+    "require": {
+    	"pclzip/pclzip": "dev-master",
+    	"electrolinux/phpquery": "dev-master",
+    	"smottt/wideimage": "dev-master",
+    	"zendframework/zend-stdlib": "2.0.*",
+    	"zendframework/zend-json": "2.0.*",
+    	"zendframework/zend-loader": "2.0.*",
+    	"zendframework/zend-http": "2.0.*",
+		"zendframework/zend-uri": "2.0.*"
+    },
+
+    "require-dev": {
+        "phpunit/php-code-coverage": "1.2.*",
+        "phpunit/php-invoker": "1.1.*",
+        "phpunit/dbunit": "1.3.*",
+        "phpunit/phpunit-selenium": "1.3.*",
+        "phpunit/phpunit-story": "1.0.*",
+    	"phpunit/phpunit": "3.7.*"
+    }  
+}
