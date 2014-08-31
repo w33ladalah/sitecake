@@ -5,7 +5,7 @@ SiteCake is drag & drop content management system that edits static HTML files. 
 
 For more info check the [Wiki](http://github.com/sitecake/sitecake/wiki).
 
-#### Quick Start
+## Quick Start
 
 [Download](https://github.com/sitecake/sitecake/releases) the latest release, grab a sample template from 
 [here](sitecake.com/portfolio.zip), extract archives to your web hosting directory and you 
