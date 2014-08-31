@@ -3,7 +3,7 @@ Welcome to SiteCake!
 
 SiteCake is drag & drop content management system that edits static HTML files. A standard web hosting (web server and PHP 5.3+) is all you need to install and use it.
 
-More info could be found at [sitecake.com](http://sitecake.com). For documentation, check the [project's Wiki](http://github.com/sitecake/sitecake/wiki).
+For more info check the [Wiki](http://github.com/sitecake/sitecake/wiki).
 
 ## Quick Start
 
