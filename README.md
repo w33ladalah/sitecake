@@ -7,8 +7,8 @@ More info could be found at [sitecake.com](http://sitecake.com). For documentati
 
 ## Quick Start
 
-[Download](https://github.com/sitecake/sitecake/downloads) the latest SiteCake, grab a SiteCake Theme from 
-[here](http://github.com/sitecake/sitecake-themes/downloads), extract archives to your web hosting directory and you 
+[Download](https://github.com/sitecake/sitecake/releases) the latest release, grab a sample template from 
+[here](sitecake.com/portfolio.zip), extract archives to your web hosting directory and you 
 should be ready to start editing. Just access http://yourdomain.com/sc-admin.php (default password is _admin_) and have fun!
 
 ## Copyright and License
