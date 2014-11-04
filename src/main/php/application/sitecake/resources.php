@@ -1,5 +1,5 @@
 <?php
-namespace sitecake;
+namespace Sitecake;
 
 class resources {
 	static $map;

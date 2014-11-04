@@ -1,5 +1,5 @@
 <?php
-namespace sitecake;
+namespace Sitecake;
 
 class slock {
 	static function create($name, $timeout = 0) {

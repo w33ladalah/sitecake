@@ -7,15 +7,18 @@
     "homepage": "http://sitecake.com",
     "licence": "GPL-3.0+",
 
+    "autoload": {
+        "psr-4" : {
+            "Sitecake\\": "application/sitecake"
+        }
+    },
+
     "require": {
+        "silex/silex": "~1.2",
     	"pclzip/pclzip": "dev-master",
     	"electrolinux/phpquery": "dev-master",
     	"smottt/wideimage": "dev-master",
-    	"zendframework/zend-stdlib": "2.0.*",
-    	"zendframework/zend-json": "2.0.*",
-    	"zendframework/zend-loader": "2.0.*",
-    	"zendframework/zend-http": "2.0.*",
-		"zendframework/zend-uri": "2.0.*"
+        "league/flysystem": "0.5.*"
     },
 
     "require-dev": {

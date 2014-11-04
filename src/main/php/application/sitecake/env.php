@@ -1,76 +1,150 @@
 <?php
-namespace sitecake;
+namespace Sitecake;
 
-class env {
-	static function ensure() {
-		return array_merge(array(), 
-			env::ensureDirectory(SC_ROOT, false, true),
-			env::ensureDirectory(DRAFT_CONTENT_DIR),
-			env::ensureDirectory(PUBLIC_IMAGES_DIR),
-			env::ensureDirectory(PUBLIC_FILES_DIR),
-			env::ensureDirectory(TEMP_DIR),
-			env::ensureFilesWritable(),
-			env::checkSitemap());
-		
+use LogicException;
+use RuntimeException;
+use League\Flysystem\FilesystemInterface;
+
+class Env {
+	protected $fs;
+
+	protected $tmp;
+
+	protected $draft;
+
+	protected $backup;
+
+	protected $ignores;
+
+	public function __construct(FilesystemInterface $fs) {
+		$this->fs = $fs;
+
+		$this->ensureDirs();
+
+		$this->ignores = array();
+		$this->loadIgnorePatterns();
 	}
-	
-	/**
-	 * Check and/or create the given directory path.
-	 * 
-	 * @param string $path the required directory path
-	 * @param boolean $create create the directory if not exists
-	 * @param boolean $writable check if the directory is writable
-	 * @return array with error text messages
-	 */
-	static function ensureDirectory($path, $create = true, $writable = true) {
-		$errors = array();
-		
-		if (!io::file_exists($path)) {
-			if (!$create) {
-				array_push($errors,
-					resources::message('DIR_NOT_EXISTS', $path));
-			} elseif (!io::mkdir($path, 0775, true)) {
-				array_push($errors,
-					resources::message('DIR_NOT_CREATED', $path));
+
+	private function ensureDirs() {
+		// check/create directory images
+		try {
+			if (!$this->fs->ensureDir('images')) {
+				throw new LogicException('Could not ensure that the directory /images is present and writtable.');
 			}
+		} catch (RuntimeException $e) {
+			throw new LogicException('Could not ensure that the directory /images is present and writtable.');
 		}
-		
-		if ($writable && !io::is_writable($path)) {
-			array_push($errors, 
-				resources::message('DIR_NOT_WRITABLE', $path));
-		}
-
-		return $errors;
-	}
-
-	/** 
-	 * Check write permission of file's template.
-	 * 
-	 * @return array with error text messages
-	 */
-	static function ensureFilesWritable() {
-		$errors = array();
-
-		foreach ($pageFiles = renderer::pageFiles() as $pageFile) {
-			if (!io::is_writable($pageFile)) {
-				array_push($errors, resources::message('FILE_NOT_WRITABLE', $pageFile));
+		// check/create files
+		try {
+			if (!$this->fs->ensureDir('files')) {
+				throw new LogicException('Could not ensure that the directory /files is present and writtable.');
 			}
-		}
+		} catch (RuntimeException $e) {
+			throw new LogicException('Could not ensure that the directory /files is present and writtable.');
+		}		
+		// check/create sitecake-content
+		try {
+			if (!$this->fs->ensureDir('sitecake-content')) {
+				throw new LogicException('Could not ensure that the directory /sitecake-content is present and writtable.');
+			}
+		} catch (RuntimeException $e) {
+			throw new LogicException('Could not ensure that the directory /sitecake-content is present and writtable.');
+		}		
+		// check/create sitecake-content/<workid>
+		try {
+			$work = $this->fs->randomDir('sitecake-content');
+			if ($work === false) {
+				throw new LogicException('Could not ensure that the work directory in /sitecake-content is present and writtable.');
+			}
+		} catch (RuntimeException $e) {
+			throw new LogicException('Could not ensure that the work directory in /sitecake-content is present and writtable.');
+		}	
+		// check/create sitecake-content/<workid>/tmp
+		try {
+			$this->tmp = $this->fs->ensureDir($work . '/tmp');
+			if ($this->tmp === false) {
+				throw new LogicException('Could not ensure that the directory ' . $work . '/tmp is present and writtable.');
+			}
+		} catch (RuntimeException $e) {
+			throw new LogicException('Could not ensure that the directory ' . $work . '/tmp is present and writtable.');
+		}		
+		// check/create sitecake-content/<workid>/draft
+		try {
+			$this->draft = $this->fs->ensureDir($work . '/draft');
+			if ($this->draft === false) {
+				throw new LogicException('Could not ensure that the directory ' . $work . '/draft is present and writtable.');
+			}
+		} catch (RuntimeException $e) {
+			throw new LogicException('Could not ensure that the directory ' . $work . '/draft is present and writtable.');
+		}		
+		// check/create sitecake-content/<workid>/backup
+		try {
+			$this->backup = $this->fs->ensureDir($work . '/backup');
+			if ($this->backup === false) {
+				throw new LogicException('Could not ensure that the directory ' . $work . '/backup is present and writtable.');
+			}
+		} catch (RuntimeException $e) {
+			throw new LogicException('Could not ensure that the directory ' . $work . '/backup is present and writtable.');
+		}	
+	}
 
-		return $errors;
-	}
-	
-	/**
-	 * Checks if the sitemap file is writtable.
-	 * 
-	 * @return array with error text messages
-	 */
-	static function checkSitemap() {
-		$errors = array();
-		$path = SITE_MAP_FILE;
-		if (io::file_exists($path) && !io::is_writable($path)) {
-			array_push($errors, resources::message('FILE_NOT_WRITABLE', $path));
+	private function loadIgnorePatterns() {
+		$ignores = array();
+		if ($this->fs->has('.scignores')) {
+			$this->ignores = preg_split('/\R/', $this->fs->read('.scignores'));
 		}
-		return $errors;
+		$ignores = array_merge($this->ignores, array(
+			'sitecake/',
+			'sitecake-content/'
+		));
 	}
+
+	/**
+	 * Returns the path of the temporary directory.
+	 * @return string the tmp dir path
+	 */
+	public function tmpPath() {
+		return $this->tmp;
+	}
+
+	/**
+	 * Returns the path of the draft directory.
+	 * @return string the draft dir path
+	 */
+	public function draftPath() {
+		return $this->draft;
+	}
+
+	/**
+	 * Returns the path of the backup directory.
+	 * @return string the backup dir path
+	 */
+	public function backupPath() {
+		return $this->backup;
+	}
+
+	/**
+	 * Returns a list of paths of CMS related files from the give
+	 * directory. It looks for HTML files, images and uploaded files.
+	 * Also, ignore entries from .scignore filter the output list.
+	 * 
+	 * @param  string $directory the root directory to start search into
+	 * @return array            the output paths list
+	 */
+	public function listScPaths($directory = '') {
+		$ignores = $this->ignores;
+		return array_filter(array_merge(
+			$this->fs->listPatternPaths($directory, '/^[^\/]*\.html?$/'),
+			$this->fs->listPatternPaths($directory . '/images', '/^.*sc[0-9a-f]{13}[0-9]{2}\-.*$/'),
+			$this->fs->listPatternPaths($directory . '/files', '/^.*sc[0-9a-f]{13}[0-9]{2}\-.*$/')),
+			function($path) use ($ignores) {
+				foreach ($ignores as $ignore) {
+					if ($ignore !== '' && strpos($path, $ignore) === 0) {
+						return false;
+					}
+				}
+				return true;
+			});
+	}
+
 }

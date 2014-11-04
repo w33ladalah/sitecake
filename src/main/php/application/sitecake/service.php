@@ -1,5 +1,5 @@
 <?php
-namespace sitecake;
+namespace Sitecake;
 
 use \Exception as Exception;
 use Zend\Json\Json as json;

@@ -1,5 +1,5 @@
 <?php
-namespace sitecake;
+namespace Sitecake;
 
 use Zend\Http\ClientStatic as client;
 use Zend\Http\Response as Response;

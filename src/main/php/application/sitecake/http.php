@@ -1,5 +1,5 @@
 <?php
-namespace sitecake;
+namespace Sitecake;
 
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\PhpEnvironment\Request;

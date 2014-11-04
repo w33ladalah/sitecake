@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="SiteCake" default="build" basedir="." description="SiteCake CMS">
-	<property name="version" value="2.0.3"/>
-	<property name="scedit.version" value="2.0.3"/>
+	<property name="version" value="2.0.4-SNAPSHOT"/>
+	<property name="scedit.version" value="2.0.4-SNAPSHOT"/>
 
 	<property name="build.dir" value="./build"/>
 	<property name="package.dir" value="${build.dir}/target"/>
@@ -104,11 +104,13 @@
 		<copy todir="${package.dir}/sitecake">
 			<fileset dir="./src/main/resources">
 				<include name="*.*"/>
+				<exclude name="config.php"/>
 			</fileset>
 			<filterchain>
 				<expandproperties/>
 			</filterchain>			
 		</copy>
+		<copy file="./src/main/resources/config.php" todir="${package.dir}/sitecake/${version}/server"/>
 
 		<copy file="composer.json" todir="${package.dir}/sitecake/${version}/server"/>
 		<exec command="composer --prefer-dist --no-dev install"

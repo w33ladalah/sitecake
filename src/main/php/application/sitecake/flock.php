@@ -1,5 +1,5 @@
 <?php
-namespace sitecake;
+namespace Sitecake;
 
 /**
  * Inter-thread synchronization mechanism.

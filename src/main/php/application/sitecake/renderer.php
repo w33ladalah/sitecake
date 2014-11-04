@@ -1,14 +1,19 @@
 <?php
-namespace sitecake;
+namespace Sitecake;
 
-use Zend\Http\PhpEnvironment\Request,
-	Zend\Http\PhpEnvironment\Response,
-	\phpQuery;
-
+use \phpQuery;
 use \Exception as Exception;
 
-class renderer {
-	static function process() {
+class Renderer {
+
+	protected $app;
+
+	public function __constructor($app) {
+		$this->app = $app;
+	}
+
+	public function process() {
+		/*
 		try {
 			http::send(renderer::response(http::request()));
 			renderer::purge();
@@ -18,7 +23,8 @@ class renderer {
 				$e->getMessage() . "</b><br/>" .
 				$e->getFile() . '(' . $e->getLine() . '): <br/>' . 
 				implode("<br/>", explode("\n", $e->getTraceAsString()))));
-		}
+		}*/
+		
 	}
 	
 	/**

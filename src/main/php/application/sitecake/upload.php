@@ -1,5 +1,5 @@
 <?php
-namespace sitecake;
+namespace Sitecake;
 
 use \Zend\Http\Request as Request;
 use \wideimage\img as img;
