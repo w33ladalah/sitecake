@@ -63,7 +63,7 @@
 		</path>
 		<includepath classpathref="project.class.path" />
 
-		<exec command="vendor/bin/phpunit --bootstrap src/test/php/phpunit-bootstrap.php --include-path ./src/main/lib:./src/main/php/application --test-suffix -test.php --filter Test --process-isolation src/test/php/sitecake" 
+		<exec command="vendor/bin/phpunit --bootstrap src/test/php/phpunit-bootstrap.php --test-suffix Test.php --filter Test --process-isolation src/test/php/sitecake" 
 			checkreturn="true" passthru="true"/>
 	</target>
 
