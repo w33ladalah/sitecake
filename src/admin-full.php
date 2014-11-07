@@ -14,7 +14,7 @@ $app['DRAFT_CONTENT'] = 'sitecake-content';
 $app['PUBLIC_IMAGES'] = 'images';
 $app['PUBLIC_FILES'] = 'files';
 $app['SERVER_BASE'] = 'sitecake/${version}/server';
-$app['SERVICE_URL'] = SERVER_BASE . '/admin.php';
+$app['SERVICE_URL'] = $app['SERVER_BASE'] . '/admin.php';
 $app['SITECAKE_EDITOR_LOGIN_URL'] = 'sitecake/' .
 	'${version}/client/publicmanager/publicmanager.nocache.js';
 $app['SITECAKE_EDITOR_EDIT_URL'] = 'sitecake/${version}/client/' .

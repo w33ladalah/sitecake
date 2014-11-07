@@ -115,7 +115,7 @@ class image {
 		self::$image = self::$image->resize( $width, $height );
 	}
 	 
-	static function transform($sx, $sy, $swidth, $sheight, $dwidth, $dheight) {
+	static function _transform($sx, $sy, $swidth, $sheight, $dwidth, $dheight) {
 		if ($dwidth == null) {
 			$dwidth = self::getWidth();
 		}

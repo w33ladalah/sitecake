@@ -9,9 +9,16 @@
 
     "autoload": {
         "psr-4" : {
-            "Sitecake\\": ["Sitecake", "src/php/Sitecake"]
+            "Sitecake\\": ["Sitecake", "src/Sitecake"]
         }
     },
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/nivancevic/flysystem"
+        }
+    ],
 
     "require": {
         "silex/silex": "~1.2",
@@ -21,7 +28,7 @@
     	"pclzip/pclzip": "dev-master",
     	"electrolinux/phpquery": "dev-master",
     	"smottt/wideimage": "dev-master",
-        "league/flysystem": "0.5.*"
+        "nivancevic/flysystem": "dev-master"
     },
 
     "require-dev": {
