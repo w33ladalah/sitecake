@@ -10,6 +10,17 @@ $app = new Silex\Application();
 // include server-side configuration
 include('config.php');
 
+$app['DRAFT_CONTENT'] = 'sitecake-content';
+$app['PUBLIC_IMAGES'] = 'images';
+$app['PUBLIC_FILES'] = 'files';
+$app['SERVER_BASE'] = 'sitecake/${version}/server';
+$app['SERVICE_URL'] = SERVER_BASE . '/admin.php';
+$app['SITECAKE_EDITOR_LOGIN_URL'] = 'sitecake/' .
+	'${version}/client/publicmanager/publicmanager.nocache.js';
+$app['SITECAKE_EDITOR_EDIT_URL'] = 'sitecake/${version}/client/' .
+	'contentmanager/contentmanager.nocache.js';
+$app['CONFIG_URL'] = 'sitecake/editor.cfg';
+
 use League\Flysystem\Filesystem;
 use League\Flysystem\Adapter\Local as AdapterLocal;
 use League\Flysystem\Adapter\Ftp as AdapterFtp;
@@ -34,28 +45,25 @@ $app['fs']->addPlugin(new Sitecake\Filesystem\RandomDirectory);
 $app['fs']->addPlugin(new Sitecake\Filesystem\CopyPaths);
 $app['fs']->addPlugin(new Sitecake\Filesystem\DeletePaths);
 
+$app->register(new Silex\Provider\SessionServiceProvider());
+
+$app->register(new Silex\Provider\TranslationServiceProvider(), array(
+    'locale_fallbacks' => array('en'),
+));
+$app['translator'] = $app->share($app->extend('translator', function($translator, $app) {
+    $translator->addLoader('yaml', new Symfony\Component\Translation\Loader\YamlFileLoader());
+    $translator->addResource('yaml', __DIR__.'/locales/en.yml', 'en');
+    return $translator;
+}));
+
 $app['env'] = $app->share(function($app) {
 	return new Sitecake\Env($app['fs']);
 });
 
 $app['renderer'] = $app->share(function($app) {
-	return new Sitecake\Renderer();
+	return new Sitecake\Renderer($app['fs'], $app);
 });
 
-// define constants
-define('DRAFT_CONTENT', 'sitecake-content');
-define('PUBLIC_IMAGES', 'images');
-define('PUBLIC_FILES', 'files');
-define('SERVER_BASE', 'sitecake/${version}/server');
-define('SERVICE_URL', SERVER_BASE . '/service.php');
-define('SITECAKE_EDITOR_LOGIN_URL', 'sitecake/' .
-	'${version}/client/publicmanager/publicmanager.nocache.js');
-define('SITECAKE_EDITOR_EDIT_URL', 'sitecake/${version}/client/' .
-	'contentmanager/contentmanager.nocache.js');
-define('CONFIG_URL', 'sitecake/editor.cfg');
-
-
-
-
-
-
+$env = $app['env'];
+$app['debug'] = true;
+$app->run();

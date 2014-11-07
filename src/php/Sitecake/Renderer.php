@@ -6,27 +6,45 @@ use \Exception as Exception;
 
 class Renderer {
 
-	protected $app;
+	protected $sm;
 
-	public function __constructor($app) {
-		$this->app = $app;
+	protected $options;
+
+	public function __constructor(SessionManagerInterface $sm, $options) {
+		$this->sm = $sm;
+		$this->options = $options;
 	}
 
 	public function process() {
-		/*
-		try {
-			http::send(renderer::response(http::request()));
-			renderer::purge();
-			meta::save();
-		} catch (Exception $e) {
-			http::send(http::errorResponse('<h2>Exception: </h2><b>' . 
-				$e->getMessage() . "</b><br/>" .
-				$e->getFile() . '(' . $e->getLine() . '): <br/>' . 
-				implode("<br/>", explode("\n", $e->getTraceAsString()))));
-		}*/
-		
+		return $sm->isLoggedIn() ?
+			$this->loginResponse() : $this->editResponse();
 	}
 	
+	protected function loginResponse() {
+		return $this->injectLoginDialog($this->getDefaultPublicPage());
+	}
+
+	protected function getDefaultPublicPage() {
+		return "<html><head></head><body>It works</body></html>";
+	}
+
+	protected function injectLoginDialog($html) {
+		return (string)HtmlUtils::appendToHead($html, $this->clientCodeLogin());
+	}
+
+	protected function clientCodeLogin() {
+		$globals = "var sitecakeGlobals = {".
+			"editMode: false, " .
+			"serverVersionId: 'SiteCake CMS ${version}', " .
+			"sessionServiceUrl:'" . $this->options['SERVICE_URL'] . "', " .
+			"configUrl:'" . $this->options['CONFIG_URL'] . "', " .
+			"forceLoginDialog: true" .
+		"};";
+				
+		return Utils::wrapToScriptTag($globals) .
+			Utils::scriptTag($this->options['SITECAKE_EDITOR_LOGIN_URL']);
+	}
+
 	/**
 	 * 
 	 * Enter description here ...
@@ -42,17 +60,6 @@ class Renderer {
 				!renderer::isLoggedin());
 		} else {
 			return http::notFoundResponse($req->getBasePath() . '/' . $pageUri);
-		}
-	}
-		
-	static function isLoggedin() {
-		if ( isset($_COOKIE[ session::sessionName() ]) ) {
-			session_start();
-			return (isset($_SESSION['loggedin']) && 
-				$_SESSION['loggedin'] === true);
-		}
-		else {
-			return false;
 		}
 	}
 	
@@ -184,23 +191,10 @@ class Renderer {
 	
 	static function clientCode($isLogin, $isDraft) {
 		return $isLogin ? 
-			renderer::clientCodeLogin() : renderer::clientCodeEdit($isDraft);
+			$this->clientCodeLogin() : $this->clientCodeEdit($isDraft);
 	}
 	
-	static function clientCodeLogin() {
-		$globals = "var sitecakeGlobals = {".
-			"editMode: false, " .
-			"sessionId: '<session id>', " .
-			"serverVersionId: 'SiteCake CMS ${version}', " .
-			"sessionServiceUrl:'" . SERVICE_URL . "', " .
-			"configUrl:'" . CONFIG_URL . "', " .
-			"forceLoginDialog: true" .
-		"};";
-				
-		return 
-			renderer::wrapToScriptTag($globals) .
-			renderer::scriptTag(SITECAKE_EDITOR_LOGIN_URL);
-	}
+
 	
 	static function clientCodeEdit($isDraft) {
 		$globals = "var sitecakeGlobals = {".
@@ -220,14 +214,7 @@ class Renderer {
 			renderer::scriptTag(SITECAKE_EDITOR_EDIT_URL);
 	}
 	
-	static function wrapToScriptTag($code) {
-		return '<script type="text/javascript">' . $code . '</script>';
-	}
-	
-	static function scriptTag($url) {
-		return '<script type="text/javascript" language="javascript" src="' .
-			$url . '"></script>';	
-	}
+
 	
 	static function injectDraftContent($tpl, $content) {
 		$containers = renderer::containers($tpl);

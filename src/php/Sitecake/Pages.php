@@ -3,8 +3,30 @@ namespace Sitecake;
 
 use \phpQuery as phpQuery;
 
-class pages {
+class Pages {
 	
+	protected $fs;
+
+	protected $env;
+
+	protected $publicPages;
+
+	public function __construct(Filesistem $fs, Env $env) {
+		$this->fs = $fs;
+		$this->env = $env;
+	}
+
+	public function defaultPublicPage() {
+
+	}
+
+	protected function publicPages() {
+		if (!isset($this->publicPages)) {
+			$this->env->listScPagePaths();
+		}
+		return $this->publicPages;
+	}
+
 	static function get($full = false) {
 		$pages = array();
 		$pageFiles = pages::page_files();

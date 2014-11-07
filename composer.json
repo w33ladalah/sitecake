@@ -9,12 +9,15 @@
 
     "autoload": {
         "psr-4" : {
-            "Sitecake\\": "application/Sitecake"
+            "Sitecake\\": ["Sitecake", "src/php/Sitecake"]
         }
     },
 
     "require": {
         "silex/silex": "~1.2",
+        "symfony/translation": "~2.3",
+        "symfony/config": "~2.3",
+        "symfony/yaml": "~2.3",        
     	"pclzip/pclzip": "dev-master",
     	"electrolinux/phpquery": "dev-master",
     	"smottt/wideimage": "dev-master",

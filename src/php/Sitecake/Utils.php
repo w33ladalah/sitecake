@@ -1,7 +1,7 @@
 <?php
 namespace Sitecake;
 
-class util {
+class Utils {
 	
 	/**
 	 * Generates unique identifier.
@@ -75,7 +75,7 @@ class util {
 	}
 	
 	static function array_find_prop($array, $prop, $value) {
-		return array_shift(util::array_filter_prop($array, $prop, $value));
+		return array_shift(Utils::array_filter_prop($array, $prop, $value));
 	}
 	
 	static function array_diff($arr1, $arr2) {
@@ -219,4 +219,12 @@ class util {
 		return $options['lowercase'] ? mb_strtolower($str, 'UTF-8') : $str;
 	}	
 
+	static function wrapToScriptTag($code) {
+		return '<script type="text/javascript">' . $code . '</script>';
+	}
+	
+	static function scriptTag($url) {
+		return '<script type="text/javascript" language="javascript" src="' .
+			$url . '"></script>';	
+	}
 }

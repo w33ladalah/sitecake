@@ -89,4 +89,42 @@ class image {
 		img::unload();
 	}
 	
+	static function resizeToHeight($height) {
+		self::$image = self::$image->resize(null, $height);
+	}
+	 
+	static function resizeToWidth($width) {
+		self::$image = self::$image->resize($width,null);
+	}
+	
+	static function resizeToDimension($dimension) {
+		if (self::$image->getWidth() >= self::$image->getHeight()) {
+			self::resizeToWidth($dimension);
+		} else {
+			self::resizeToHeight($dimension);
+		}
+	}
+	 
+	static function scale($scale) {
+		$width = self::getWidth() * $scale/100;
+		$height = self::getHeight() * $scale/100;
+		self::$image = self::$image->resize($width, $height);
+	}
+	 
+	static function resize($width, $height) {
+		self::$image = self::$image->resize( $width, $height );
+	}
+	 
+	static function transform($sx, $sy, $swidth, $sheight, $dwidth, $dheight) {
+		if ($dwidth == null) {
+			$dwidth = self::getWidth();
+		}
+	
+		if ($dheight == null) {
+			$dheight = self::getHeight();
+		}
+	
+		self::$image = self::$image->crop($sx, $sy, $swidth, $sheight)->
+			resize($dwidth, $dheight);
+	}	
 }

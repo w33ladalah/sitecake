@@ -125,7 +125,7 @@ class Env {
 	}
 
 	/**
-	 * Returns a list of paths of CMS related files from the give
+	 * Returns a list of paths of CMS related files from the given
 	 * directory. It looks for HTML files, images and uploaded files.
 	 * Also, ignore entries from .scignore filter the output list.
 	 * 
@@ -146,6 +146,20 @@ class Env {
 				}
 				return true;
 			});
+	}
+
+	public function listScPagesPaths($directory = '') {
+		$ignores = $this->ignores;
+		return array_filter(
+			$this->fs->listPatternPaths($directory, '/^[^\/]*\.html?$/'),
+			function($path) use ($ignores) {
+				foreach ($ignores as $ignore) {
+					if ($ignore !== '' && strpos($path, $ignore) === 0) {
+						return false;
+					}
+				}
+				return true;
+			});		
 	}
 
 }

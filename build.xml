@@ -49,13 +49,13 @@
 
 	<target name="verify">
 		<phplint>
-			<fileset dir="src/main/php">
+			<fileset dir="src">
 				<include name="**/*.php"/>
 			</fileset>
 		</phplint>
 	</target>
 
-	<target name="test" depends="deps,verify">
+	<target name="test" depends="verify">
 		<autoloader autoloaderpath="vendor/autoload.php"/>
 
 		<path id="project.class.path">
@@ -63,7 +63,7 @@
 		</path>
 		<includepath classpathref="project.class.path" />
 
-		<exec command="vendor/bin/phpunit --bootstrap src/test/php/phpunit-bootstrap.php --test-suffix Test.php --filter Test --process-isolation src/test/php/sitecake" 
+		<exec command="vendor/bin/phpunit --bootstrap test/phpunit-bootstrap.php --test-suffix Test.php --filter Test --process-isolation test" 
 			checkreturn="true" passthru="true"/>
 	</target>
 
