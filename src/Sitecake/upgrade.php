@@ -1,12 +1,11 @@
 <?php
 namespace Sitecake;
 
-use Zend\Http\ClientStatic as client;
-use Zend\Http\Response as Response;
 use \ZipArchive as ZipArchive;
 use pclzip\pclzip as pclzip;
 
-class upgrade {
+class Upgrade {
+	
 	static function perform() {
 		$latest = upgrade::latest_remote();
 		$current = upgrade::latest_local();

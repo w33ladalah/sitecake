@@ -4,8 +4,9 @@ namespace Sitecake;
 use LogicException;
 use RuntimeException;
 use League\Flysystem\FilesystemInterface;
+use Sitecake\Exception\FileNotFoundException;
 
-class Env {
+class Site {
 	
 	protected $fs;
 
@@ -136,8 +137,8 @@ class Env {
 		$ignores = $this->ignores;
 		return array_filter(array_merge(
 			$this->fs->listPatternPaths($directory, '/^[^\/]*\.html?$/'),
-			$this->fs->listPatternPaths($directory . '/images', '/^.*sc[0-9a-f]{13}[0-9]{2}\-.*$/'),
-			$this->fs->listPatternPaths($directory . '/files', '/^.*sc[0-9a-f]{13}[0-9]{2}\-.*$/')),
+			$this->fs->listPatternPaths($directory . '/images', '/^.*sc[0-9a-f]{13}(\-[^\.]+)?\..*$/'),
+			$this->fs->listPatternPaths($directory . '/files', '/^.*sc[0-9a-f]{13}(\-[^\.]+)?\..*$/')),
 			function($path) use ($ignores) {
 				foreach ($ignores as $ignore) {
 					if ($ignore !== '' && strpos($path, $ignore) === 0) {
@@ -151,7 +152,7 @@ class Env {
 	public function listScPagesPaths($directory = '') {
 		$ignores = $this->ignores;
 		return array_filter(
-			$this->fs->listPatternPaths($directory, '/^[^\/]*\.html?$/'),
+			$this->fs->listPatternPaths($directory, '/^.*\.html?$/'),
 			function($path) use ($ignores) {
 				foreach ($ignores as $ignore) {
 					if ($ignore !== '' && strpos($path, $ignore) === 0) {
@@ -162,4 +163,115 @@ class Env {
 			});		
 	}
 
+	/**
+	 * Starts the site draft out of the public content.
+	 * It copies public pages and resources into the draft folder.
+	 */
+	public function startEdit() {
+		if (!$this->draftExists()) {
+			$this->startDraft();
+		}
+	}
+
+	public function backup() {
+		$backupPath = $this->newBackupPath();
+		$this->fs->copyPaths($this->listScPaths(), '', $backupPath);
+	}
+
+	public function restore($version = 0) {
+
+	}
+
+	public function getDefaultPublicPage() {
+		$paths = $this->listScPagesPaths();
+		if (in_array('index.html', $paths)) {
+			return new Page($this->fs->read('index.html'));
+		} else if (count($paths) > 0) {
+			return new Page($this->fs->read($paths[0]));
+		} else {
+			throw new FileNotFoundException();
+		}
+	}
+
+	public function getPage($uri) {
+		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
+		$pagePath = $this->draftPath() . '/' . $uri;
+		if (in_array($pagePath, $draftPagePaths)) {
+			return new Page($this->fs->read($pagePath));
+		} else {
+			throw new FileNotFoundException();
+		}
+	}
+
+	public function getAllPages() {
+		$pages = array();
+		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
+		foreach ($draftPagePaths as $pagePath) {
+			array_push($pages, array('path' => $pagePath, 'page' => new Page($this->fs->read($pagePath)));
+		}
+		return $pages;
+	}
+
+	public function publishDraft() {
+		$this->backup();
+		$this->cleanupDraft();
+		$this->fs->deletePaths($this->listScPaths());
+		$this->fs->copyPaths($this->listScPaths($this->draftPath()), $this->draftPath(), '/');
+	}
+
+	public function isDraftClean() {
+		return $this->fs->has($this->draftDirtyMarkerPath());
+	}
+
+	protected function draftDirtyMarkerPath() {
+		return $this->draftPath().'/draft.drt';
+	}
+
+	protected function draftMarkerPath() {
+		return $this->draftPath().'/draft.mkr';
+	}
+
+	protected function draftExists() {
+		return $this->fs->has($this->draftMarkerPath());
+	}
+
+	protected function startDraft() {	
+		$this->fs->copyPaths($this->listScPaths(), '', $this->draftPath());
+		$this->fs->write($this->draftMarkerPath());
+		$this->decorateDraft();
+	}
+
+	protected function removeDraft() {
+		$this->fs->deletePaths($this->listScPaths($this->draftPath()));
+		$this->fs->delete($this->draftMarkerPath());
+	}
+
+	protected function newBackupPath() {
+		$path = $this->backupPath() . '/v';
+		$this->fs->delete($path . '/**/*');
+		$this->fs->mkdir($path);
+
+		return $path;
+	}
+
+	protected function decorateDraft() {
+		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
+		foreach ($draftPagePaths as $pagePath) {
+			$page = new Page($this->fs->read($pagePath));
+			$page->ensurePageId();
+			$page->normalizeContainerNames();
+			$this->fs->update($pagePath, (string)$page);
+		}
+	}
+
+	protected function cleanupDraft() {
+		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
+		foreach ($draftPagePaths as $pagePath) {
+			$page = new Page($this->fs->read($pagePath));
+			$page->removePageId();
+			$page->cleanupContainerNames();
+			$page->removeMetadata();
+			$this->fs->update($pagePath, (string)$page);
+		}
+	}		
 }

@@ -4,8 +4,10 @@ namespace Sitecake;
 
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class SessionManger implements SessionManagerInterface {
+class SessionManager implements SessionManagerInterface {
 	
+	const SESSION_TIMEOUT = 10000;
+
 	protected $session;
 
 	protected $fileLock;
@@ -28,12 +30,16 @@ class SessionManger implements SessionManagerInterface {
 	}
 
 	public function login($credentials) {
-		if ($this->auth->authenticate($credentials)) {
+		if ($this->isLoggedIn()) {
+			return 0;
+		}
+
+		if ($this->auth->authenticate($credentials)) {			
 			if ($this->fileLock->exists('login')) {
 				return 2;
 			} else {
 				$this->session->set('loggedin', true);
-				$this->fileLock->set('login', 20);
+				$this->fileLock->set('login', self::SESSION_TIMEOUT);
 				return 0;
 			}
 		} else {
@@ -48,7 +54,7 @@ class SessionManger implements SessionManagerInterface {
 
 	public function alive() {
 		if ($this->isLoggedIn()) {
-			$this->fileLock->set('login', 20);
+			$this->fileLock->set('login', self::SESSION_TIMEOUT);
 		}
 	}
 

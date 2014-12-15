@@ -2,7 +2,7 @@ Welcome to SiteCake!
 ====================
 
 SiteCake is an easy to use, downloadable CMS (Content Managament System) for small websites, with a WYSIWYG, in-place, drag&drop content editor.
-A standard web hosting (web server and PHP 5.3+) is all you need to install and use it.
+A standard web hosting (web server and PHP 5.4+) is all you need to install and use it.
 
 More info could be found at [sitecake.com](http://sitecake.com). For documentation, check the [project's Wiki](http://github.com/sitecake/sitecake/wiki).
 

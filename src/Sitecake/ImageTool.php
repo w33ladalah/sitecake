@@ -1,13 +1,61 @@
 <?php
+
 namespace Sitecake;
 
-use \phpQuery as phpQuery;
-use \phpQuery\DOMDocumentWrapper as DOMDocumentWrapper;
-use \wideimage\img as img;
-use \Zend\Json\Json as json;
+use \WideImage\WideImage;
 
-class image {
+class ImageTool {
 	
+	static protected $mimeExtensions = array(
+		'jpg' => 'image/jpg', 
+		'jpg' => 'image/jpeg', 
+		'jpg' => 'image/pjpeg', 
+		'gif' => 'image/gif', 
+		'png' => 'image/png'
+	);
+
+	protected $fs;
+
+	protected $imagesDir;
+
+	public function __construct($fs, $imagesDir) {
+		$this->fs = $fs;
+		$this->imagesDir = $imagesDir;
+	}
+
+	public function image($uri, $x = '0%', $y = '0%', $w = '100%', $h = '100%') {
+		if (Utils::isURL($uri)) {
+			list($image, $extension) = $this->loadFromURL($uri);
+			$this->transform(Utils::nameFromURL($uri), $extension, WideImage::loadFromString($image), $x, $y, $w, $h) :
+		} else {
+			$imageName = $this->imageName($uri);
+			$this->transform($imageName['name'], $imageName['extension'], WideImage::loadFromString($this->fs->read($uri)), $x, $y, $w, $h);
+		}
+	}
+
+	protected function parseImgPathSet($id) {
+		$pathPattern = 
+		$this->fs->listPatternPaths($pathPattern);
+	}
+
+	protected function imageName($uri) {
+		$info = pathinfo($uri);
+		return array('name' => $info['filename'], 'extension' => $info['extension']);
+	}
+
+	protected function loadFromURL($url) {
+		$image = file_get_contents($url);
+  		$headers = http_parse_headers(implode("\r\n", $http_response_header));
+  		$ext = array_search($headers['Content-Type'], $mimeExtensions);
+		return array($image, $ext);
+	}
+
+	protected function transform($name, $extension, $img, $x, $y, $w, $h) {
+		$origWidth = $img->getWidth();
+
+		$img->crop($x, $y, $w, $h);
+	}
+
 	static function transform($params) {
 		$url = $params['image'];	
 		$data = $params['data'];

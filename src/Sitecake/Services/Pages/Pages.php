@@ -1,5 +1,5 @@
 <?php
-namespace Sitecake;
+namespace Sitecake\Services\Pages;
 
 use \phpQuery as phpQuery;
 
@@ -7,24 +7,42 @@ class Pages {
 	
 	protected $fs;
 
-	protected $env;
+	protected $site;
 
-	protected $publicPages;
+	protected $publicPagePaths;
 
-	public function __construct(Filesistem $fs, Env $env) {
+	protected $_containers;
+
+	public function __construct(Filesistem $fs, Site $site) {
 		$this->fs = $fs;
-		$this->env = $env;
+		$this->site = $site;
+		$this->_containers;
 	}
 
-	public function defaultPublicPage() {
-
-	}
-
-	protected function publicPages() {
-		if (!isset($this->publicPages)) {
-			$this->env->listScPagePaths();
+	public function setContainerContent($container, $content) {
+		if (array_key_exists($container, $this->containers())) {
+			foreach ($this->containers()[$container] as $page) {
+				$page->setContainerContent($container, $content);
+			}
 		}
-		return $this->publicPages;
+	}
+
+	protected function getPublicPagePaths() {
+		if (!isset($this->publicPagePaths)) {
+			$this->publicPagePaths = $this->site->listScPagePaths();
+		}
+		return $this->publicPagePaths;
+	}
+
+	protected function containers() {
+		if (!$this->_containers) {
+			$this->loadContainers();
+		}
+		return $this->_containers;
+	}
+
+	protected function loadContainers() {
+		
 	}
 
 	static function get($full = false) {
@@ -228,94 +246,6 @@ class Pages {
 				'</a></li>';
 		}
 		return $html;
-	}
-	
-	/**
-	 * Saves the generated sitemap file.
-	 *
-	 * @param array $pages an array of navigable pages
-	 */
-	static function sitemap($pages) {
-		io::file_put_contents(SITE_MAP_FILE, 
-			pages::gen_sitemap($pages));
-	}
-
-	/**
-	 * Generate the appropriate sitemap xml for a given array of navigable
-	 * pages.
-	 *
-	 * @param array $pages an array of navigable pages
-	 * @return string the sitemap xml
-	 */
-	static function gen_sitemap($pages) {
-		$base = http::baseUrl();
-		$result = '<?xml version="1.0" encoding="UTF-8"?>' .
-			'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-		foreach ($pages as $page) {
-			if ($page['idx'] >= 0 || $page['url'] == 'index.html') {
-				$result .= '<url><loc>' . $base . 
-					($page['url'] == 'index.html' ? '' : $page['url']) . 
-					'</loc></url>';
-			}
-		}
-		return $result . '</urlset>';		
-	}
-
-	/**
-	 * Returns paths of all existing page files.
-	 * Page files are those files in <code>SC_ROOT</code> directory with 
-	 * <code>html</code> extension.
-	 * 
-	 * @return array containing page files where the key is the file's relative
-	 * 	path from <code>SC_ROOT</code>
-	 */
-	static function page_files() {
-		$files = io::glob(SC_ROOT.'/*.html');
-		return ($files === FALSE || empty($files)) ? array() : 
-			array_combine(array_map("basename", $files), $files);
-	}
-	
-	/**
-	 * Converts the page relative path (from <code>SC_ROOT</code>) to the page
-	 * relative URL.
-	 * 
-	 * @param string $path page file's relative path
-	 * @return string relative URL
-	 */
-	static function rpath2url($path) {
-		return str_replace("\\", "/", $path);
-	}
-	
-	/**
-	 * Converts the page relative URL to the page relative path (from 
-	 * <code>SC_ROOT</code>).
-	 * 
-	 * @param string $url a page's relative URL
-	 * @return string the page file's relative path
-	 */
-	static function url2rpath($url) {
-		return $url;
-	}
-	
-	/**
-	 * Converts a relative page file path to the respective absolute one.
-	 *
-	 * @param string $rpath a relative path (to <code>SC_ROOT</code>)
-	 * @return string the absolute path
-	 */
-	static function rpath2path($rpath) {
-		return SC_ROOT.'/'.$rpath;	
-	}
-
-	/**
-	 * Converts an absolute page file path to the respective relative one.
-	 *
-	 * @param string $path a page file absolute path
-	 * @return string the relative pate (from <code>SC_ROOT</code>)
-	 */
-	static function path2rpath($path) {
-		return (strpos($path, SC_ROOT) == 0) ? 
-			substr($path.'/', strlen(SC_ROOT)) : $path;
 	}
 	
 	/**

@@ -12,7 +12,7 @@ class CopyPaths implements PluginInterface {
     }
 
     public function getMethod() {
-        return 'copyPatsh';
+        return 'copyPaths';
     }
 
     /**
@@ -25,7 +25,7 @@ class CopyPaths implements PluginInterface {
      */
     public function handle($paths, $spath, $dpath) {
         foreach ($paths as $path) {
-            $newpath = $dpath . substr($path, strlen($spath));
+            $newpath = $dpath . '/' . substr($path, strlen($spath));            
             $this->fs->copy($path, $newpath);
         }
     }

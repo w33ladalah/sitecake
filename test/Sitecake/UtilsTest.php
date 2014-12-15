@@ -2,6 +2,8 @@
 
 namespace Sitecake;
 
+use \phpQuery;
+
 class UtilsTest extends \PHPUnit_Framework_TestCase {
 
 	/*
@@ -10,14 +12,6 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		static::mockStaticClass('\\sitecake\\util');
 	}
 	*/
-
-	function test_rpath() {
-		define('SC_ROOT', '/some/path');
-		$this->assertEquals('and/relative/path', 
-			Utils::rpath('/some/path/and/relative/path'));
-		$this->assertEquals('/some/other/path',
-			Utils::rpath('/some/other/path'));		
-	}
 	
 	function test_map() {
 		$this->assertEquals(array(1, 4, 9), 
@@ -68,11 +62,33 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(array(1), Utils::array_diff(array(1, 2, 3, 4), array(3, 4, 2)));
 	}
 	
+	function test_iterable_to_array() {
+		$doc = phpQuery::newDocument('<p></p><p></p><p></p>');
+		$array = Utils::iterable_to_array(phpQuery::pq('p'));
+		$this->assertTrue(is_array($array));
+		$this->assertEquals(3, count($array));
+	}
+
 	function test_str_endswith() {
 		$this->assertTrue(Utils::str_endswith('.html', 'index.html'));
 		$this->assertFalse(Utils::str_endswith('.html', 'index.htm'));
 		$this->assertTrue(Utils::str_endswith('.html', '.html'));
 		$this->assertFalse(Utils::str_endswith('.html', 'html'));
+	}
+
+	function test_isURL() {
+		$this->assertTrue(Utils::isURL('http://some.com/path.html'));
+		$this->assertTrue(Utils::isURL('https://some.com/path.html'));
+		$this->assertFalse(Utils::isURL('ftp://some.com/path.html'));
+		$this->assertFalse(Utils::isURL('/some.com/path.html'));
+		$this->assertFalse(Utils::isURL('some.com/path.html'));
+		$this->assertFalse(Utils::isURL('http_path.html'));
+	}
+
+	function test_nameFromURL() {
+		$this->assertEquals('a-path-seg', Utils::nameFromURL('http://some.com:80/a/path/seg.html?param'));
+		$this->assertEquals('a-path-seg', Utils::nameFromURL('http://some.com:80/a/path/seg?param'));
+		$this->assertEquals('a-path-seg', Utils::nameFromURL('http://some.com:80/a//path/seg?param'));
 	}
 
 	function test_slug() {

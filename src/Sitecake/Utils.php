@@ -10,40 +10,7 @@ class Utils {
 	static function id() {
 		return sha1(uniqid('', true));
 	}
-	
-	/**
-	 * Returns file system path relative to the SC_ROOT. If the
-	 * given absolute path does not start with SC_ROOT, the unchanged value
-	 * is returned.
-	 *
-	 * @param string $path absolute path
-	 * @return string relative path
-	 */
-	static function rpath($path) {
-		return (strpos($path, SC_ROOT . '/') === 0) ?
-			substr($path, strlen(SC_ROOT . '/')) : $path;
-	}
-	
-	/**
-	 * Returns the absolute file system path constructed from the SC_ROOT
-	 * and the given relative path.
-	 *
-	 * @param string $path relative path
-	 * @return string absolute path
-	 */
-	static function apath($path) {
-		return SC_ROOT . '/' . $path;
-	}
-	
-	static function log($text) {
-		flock::acquire('log');
-		$f = io::fopen(TEMP_DIR . '/log.txt', 'ab');
-		io::fwrite($f, $text, strlen($text));
-		io::fflush($f);
-		io::fclose($f);
-		flock::release('log');
-	}
-	
+
 	static function map($callback, $arr1, $_ = null) {
 		$args = func_get_args();
 		array_shift($args);
@@ -83,21 +50,35 @@ class Utils {
 		return is_array($res) ? $res : array();
 	}
 	
+	static function iterable_to_array($iterable) {
+		$res = array();
+		foreach ($iterable as $item) {
+			array_push($res, $item);
+		}
+		return $res;
+	}
+
 	static function str_endswith($needle, $haystack) {
 		$len = strlen($needle);
 		return ($len > strlen($haystack)) ? false : 
 			(substr($haystack, -$len) === $needle);
 	}
-	
-	/*
-	static function slug($text) {
-		$clean = function_exists("iconv") ? 
-			iconv('UTF-8', 'ASCII//TRANSLIT', $text) : $text;
-		$clean = preg_replace("/[^a-zA-Z0-9\/_| -]/", '', $clean);
-		$clean = strtolower(trim($clean, '-'));
-		$clean = preg_replace("/[\/_| -]+/", '-', $clean);
-		return $clean;		
-	}*/
+
+	public static function isURL($uri) {
+		return (preg_match('/^https?:\/\/.*$/', $uri) === 1);
+	}
+
+	public static function nameFromURL($url) {
+		$path = parse_url($url, PHP_URL_PATH);
+		$dot = strrpos($path, '.');
+		if ($dot !== false) {
+			$path = substr($path, 0, $dot);
+		}
+		if (strpos($path, '/') === 0) {
+			$path = substr($path, 1);
+		}
+		return preg_replace('/[^0-9a-zA-Z\.\-_]+/', '-', $path);
+	}
 
 	/**
 	 * Create a web friendly URL slug from a string.
@@ -219,12 +200,4 @@ class Utils {
 		return $options['lowercase'] ? mb_strtolower($str, 'UTF-8') : $str;
 	}	
 
-	static function wrapToScriptTag($code) {
-		return '<script type="text/javascript">' . $code . '</script>';
-	}
-	
-	static function scriptTag($url) {
-		return '<script type="text/javascript" language="javascript" src="' .
-			$url . '"></script>';	
-	}
 }

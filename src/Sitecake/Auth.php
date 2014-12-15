@@ -10,17 +10,26 @@ class Auth implements AuthInterface {
 
 	protected $credentialsFile;
 
+	protected $credentials;
+
 	public function __construct(Filesystem $fs, $credentialsFile) {
 		$this->fs = $fs;
 		$this->credentialsFile = $credentialsFile;
+		$this->readCredentials();
 	}
 
-	public function authenticate($credentails) {
-		return ($credentails === $GLOBALS['credentials']);
+	public function authenticate($credentials) {
+		return ($credentials === $this->credentials);
+	}
+
+	protected function readCredentials() {
+		$txt = $this->fs->read($this->credentialsFile);
+		preg_match_all('/\$credentials\s*=\s*"([^"]+)"/', $txt, $matches);
+		$this->credentials = $matches[1][0];
 	}
 
 	public function setCredentials($credentails) {
-		$GLOBALS['credentials'] = $credentails;
+		$this->credentials = $credentails;
 		$this->fs->put($this->credentialsFile, '<?php $credentials = "'.$credentails.'"; ?>');
 	}	
 }
