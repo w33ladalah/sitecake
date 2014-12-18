@@ -7,9 +7,25 @@ For more info check the [Wiki](http://github.com/sitecake/sitecake/wiki).
 
 ## Quick Start
 
-[Download](https://github.com/sitecake/sitecake/releases) the latest release, grab a sample template from 
-[here](sitecake.com/portfolio.zip), extract archives to your web hosting directory and you 
-should be ready to start editing. Just access http://yourdomain.com/sc-admin.php (default password is _admin_) and have fun!
+Upload to your hosting:
+
+* [SiteCake v2.0.3. release] (https://github.com/sitecake/sitecake/releases/tag/SCv2.0.3)
+* [Sample template] (http://sitecake.com/portfolio.zip)
+* Open `yourdomain.com/sc-admin.php` to start editing 
+
+
+##### For designers:
+
+* [SiteCake Basics](https://github.com/sitecake/sitecake/wiki/SiteCake-Basics)
+* [How to edit HTML page with SiteCake](https://github.com/sitecake/sitecake/wiki/How-to-edit-HTML-page-with-SiteCake) 
+* [User styles](http://github.com/sitecake/sitecake/wiki/User-Styles)
+
+
+
+##### For developers
+* [Building from the source](http://github.com/sitecake/sitecake/wiki/Building-from-the-source)
+ 
+
 
 #### Copyright and License
 
