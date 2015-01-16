@@ -31,7 +31,7 @@
     	"pclzip/pclzip": "dev-master",
     	"electrolinux/phpquery": "dev-master",
     	"smottt/wideimage": "dev-master",
-        "league/flysystem": "0.6.*@dev"
+        "league/flysystem": "1.0.*@dev"
     },
 
     "require-dev": {

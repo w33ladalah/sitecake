@@ -26,7 +26,7 @@ class ImageTool {
 	public function image($uri, $x = '0%', $y = '0%', $w = '100%', $h = '100%') {
 		if (Utils::isURL($uri)) {
 			list($image, $extension) = $this->loadFromURL($uri);
-			$this->transform(Utils::nameFromURL($uri), $extension, WideImage::loadFromString($image), $x, $y, $w, $h) :
+			//$this->transform(Utils::nameFromURL($uri), $extension, WideImage::loadFromString($image), $x, $y, $w, $h) :
 		} else {
 			$imageName = $this->imageName($uri);
 			$this->transform($imageName['name'], $imageName['extension'], WideImage::loadFromString($this->fs->read($uri)), $x, $y, $w, $h);
@@ -56,7 +56,7 @@ class ImageTool {
 		$img->crop($x, $y, $w, $h);
 	}
 
-	static function transform($params) {
+	static function transform1($params) {
 		$url = $params['image'];	
 		$data = $params['data'];
 		$info = image::image_info($url);

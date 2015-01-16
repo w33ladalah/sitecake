@@ -13,7 +13,9 @@ class Services {
 	public function load() {
 		$this->loadService('\Sitecake\Services\Session\SessionService');
 		$this->loadService('\Sitecake\Services\Upload\UploadService');
-		$this->loadService('\Sitecake\Services\Image\ImageService');		
+		$this->loadService('\Sitecake\Services\Image\ImageService');
+		$this->loadService('\Sitecake\Services\Pages\PagesService');
+		$this->loadService('\Sitecake\Services\Content\ContentService');		
 	}
 
 	protected function loadService($class) {

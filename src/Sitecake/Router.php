@@ -1,6 +1,8 @@
 <?php
 namespace Sitecake;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class Router {
 	
 	protected $sm;
@@ -28,19 +30,32 @@ class Router {
 	protected function execute($service, $action, $request) {
 		if (!isset($this->services[$service]) || 
 				!($this->services[$service] instanceof \Sitecake\Services\Service)) {
-			return 4044;
+			return new Response('Invalid service referenced: ' . $service, 400);
 		}
 
 		$srv = $this->services[$service];
 		if (!$srv->actionExists($action)) {
-			return 402;
+			return new Response('Invalid action requested: ' . $action, 400);
 		}
 		
 		if ($srv->isAuthRequired($action) && !$this->sm->isLoggedIn()) {
-			return 401;
+			return new Response('Unauthorized access', 401);
 		}
 
-		return $srv->$action($request);
+		return $this->response($srv, $action, $request);
+	}
+
+	protected function response($service, $action, $request) {
+		try {
+			$res = $service->$action($request);
+			if ($res instanceof Response) {
+				return $res;
+			} else {
+				return new Response($res);
+			}
+		} catch(\Exception $e) {
+			return new Response("Exception: " . $e->getMessage() . "\n\r" . $e->getTraceAsString(), 500);
+		}
 	}
 
 }

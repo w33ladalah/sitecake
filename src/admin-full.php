@@ -25,8 +25,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
+// global error handler
 $app->error(function (\LogicException $e, $code) {
-    return new Response($e->getMessage());
+    return new Response("Exception: " . $e->getMessage() . "\n\r" . $e->getTraceAsString(), 500);
+});
+
+// CORS enabled
+$app->after(function (Request $request, Response $response) {
+    $response->headers->set('Access-Control-Allow-Origin', '*');
 });
 
 use League\Flysystem\Filesystem;

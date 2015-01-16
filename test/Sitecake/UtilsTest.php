@@ -97,4 +97,21 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('my-piñata', Utils::slug('my// piñata!'));
 	}
 	
+	function test_isResourceUrl() {
+		$this->assertTrue(Utils::isResourceUrl('files/doc-sc123456789abcd.doc'));
+		$this->assertTrue(Utils::isResourceUrl('images/image-2-sc123456789abcd-00.jpg'));
+		$this->assertFalse(Utils::isResourceUrl('#files/doc-sc123456789abcd.doc'));
+		$this->assertFalse(Utils::isResourceUrl('javascript:files/doc-sc123456789abcd-00.doc'));
+		$this->assertFalse(Utils::isResourceUrl('http://some.come/files/doc-sc123456789abcd.doc'));
+	}
+
+	function test_isExternalNavLink() {
+		$this->assertTrue(Utils::isExternalNavLink('/'));
+		$this->assertTrue(Utils::isExternalNavLink('http://google.com'));
+		$this->assertTrue(Utils::isExternalNavLink('/about.html'));
+		$this->assertTrue(Utils::isExternalNavLink('/dir/about.html'));
+		$this->assertTrue(Utils::isExternalNavLink('dir/about.html'));
+
+		$this->assertFalse(Utils::isExternalNavLink('about.html'));
+	}
 }

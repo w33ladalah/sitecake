@@ -11,17 +11,17 @@ class ListPatternPathsTest extends \PHPUnit_Framework_TestCase {
 	public function test_handle() {
 		$fs = \Mockery::mock('League\Flysystem\Filesystem');
 
-		$fs->shouldReceive('listPaths')
+		$fs->shouldReceive('listContents')
 			->with('', false)
-			->andReturn(array('path1', 'path2'));
+			->andReturn(array(array('path' => 'path1'), array('path' => 'path2')));
 
-		$fs->shouldReceive('listPaths')
+		$fs->shouldReceive('listContents')
 			->with('a', false)
-			->andReturn(array('a/path1', 'a/path2'));
+			->andReturn(array(array('path' => 'a/path1'), array('path' => 'a/path2')));
 
-		$fs->shouldReceive('listPaths')
+		$fs->shouldReceive('listContents')
 			->with('p', false)
-			->andReturn(array('p/p1', 'p/p2'));
+			->andReturn(array(array('path' => 'p/p1'), array('path' => 'p/p2')));
 
 		$plugin = new ListPatternPaths();
 		$plugin->setFilesystem($fs);

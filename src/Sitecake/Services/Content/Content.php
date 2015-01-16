@@ -13,24 +13,23 @@ class Content {
 		$this->site = $site;
 	}
 
-	public function save($data) {
-		foreach ($data->keys() as $container) {
-			$content = $data->get($container);
+	public function save($id, $data) {
+		foreach ($data as $container => $content) {
 			// remove slashes
 			if (get_magic_quotes_gpc())
 				$content = stripcslashes($content);	
 			$content = base64_decode($content);
-
-			$pages->setContainerContent($container, $content);
+			$this->setContainerContent($container, $content);
 		}
-		$pages->savePages();
+		$this->savePages();
+		return 0;
 	}
 
 	protected function pages() {
 		if (!$this->_pages) {
 			$this->_pages = $this->site->getAllPages();
 		}
-		return $_pages;
+		return $this->_pages;
 	}
 
 	protected function containers() {
@@ -56,10 +55,28 @@ class Content {
 	}
 
 	protected function setContainerContent($container, $content) {
-
+		$containers = $this->containers();
+		if (isset($containers[$container])) {
+			foreach ($containers[$container] as $page) {
+				$this->setPageDirty($page);
+				$page['page']->setContainerContent($container, $content);			
+			}	
+		}		
 	}
 
-	protected function savePages() {
-		
+	protected function setPageDirty($page) {
+		foreach ($this->_pages as &$p) {
+			if ($page['path'] === $p['path']) {
+				$p['dirty'] = true;
+			}
+		}
+	}
+
+	protected function savePages() {		
+		foreach ($this->pages() as $page) {
+			if (isset($page['dirty']) && $page['dirty'] === true) {
+				$this->site->savePage($page['path'], $page['page']);
+			}
+		}
 	}
 }

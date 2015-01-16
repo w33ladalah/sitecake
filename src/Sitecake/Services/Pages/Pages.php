@@ -1,7 +1,9 @@
 <?php
 namespace Sitecake\Services\Pages;
 
+use League\Flysystem\Filesystem;
 use \phpQuery as phpQuery;
+use Sitecake\Site;
 
 class Pages {
 	
@@ -13,7 +15,7 @@ class Pages {
 
 	protected $_containers;
 
-	public function __construct(Filesistem $fs, Site $site) {
+	public function __construct(Filesystem $fs, Site $site) {
 		$this->fs = $fs;
 		$this->site = $site;
 		$this->_containers;

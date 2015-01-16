@@ -3,6 +3,7 @@
 namespace Sitecake\Services\Content;
 
 use Sitecake\Services\Service;
+use Symfony\Component\HttpFoundation\Response;
 
 class ContentService extends Service {
 
@@ -18,13 +19,17 @@ class ContentService extends Service {
 
 	public function __construct($ctx) {
 		$this->ctx = $ctx;
-		$this->content = new Content();
+		$this->content = new Content($ctx['site']);
 	}
 
 	public function save($request) {
-		$credentials = $request->query->get('credentials');
-		$status = $this->ctx['sm']->save();
-		return $this->json($request, array('status' => $status), 200);		
+		$id = $request->request->get('scpageid');
+		if (is_null($id)) {
+			return new Response('Page ID is missing', 400);
+		}
+		$request->request->remove('scpageid');		
+		$this->content->save($id, $request->request->all());
+		return $this->json($request, array('status' => 0), 200);		
 	}
 
 }

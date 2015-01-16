@@ -24,11 +24,11 @@ class ListPatternPaths implements PluginInterface {
      * @return array
      */
     public function handle($directory = '', $pattern, $recursive = false) {
-        $existingPaths = $this->fs->listPaths($directory, $recursive);       
+        $existingFiles = $this->fs->listContents($directory, $recursive);       
         $matchedPaths = array();
-        foreach ($existingPaths as $path) {
-            if (preg_match($pattern, $path) === 1) {
-                $matchedPaths[] = $path;
+        foreach ($existingFiles as $file) {
+            if (preg_match($pattern, $file['path']) === 1) {
+                $matchedPaths[] = $file['path'];
             }
         }
         return $matchedPaths;

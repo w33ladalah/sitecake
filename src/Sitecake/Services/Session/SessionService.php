@@ -2,6 +2,7 @@
 
 namespace Sitecake\Services\Session;
 
+use Symfony\Component\HttpFoundation\Response;
 use Sitecake\Services\Service;
 
 class SessionService extends Service {
@@ -31,6 +32,11 @@ class SessionService extends Service {
 	public function change($request) {
 		$credentials = $request->query->get('credentials');
 		$newCredentials = $request->query->get('newCredentials');
+
+		if (is_null($credentials) || is_null($newCredentials)) {
+			return new Response(null, 400);
+		}
+
 		if ($this->ctx['auth']->authenticate($credentials)) {
 			$this->ctx['auth']->setCredentials($newCredentials);
 			$status = 0;

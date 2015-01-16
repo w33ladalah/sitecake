@@ -10,7 +10,7 @@ class Page {
 
 	protected $doc;
 
-	protected $containers;
+	protected $_containers;
 
 	public function __construct($html) {
 		$this->sourceHtml = $html;		
@@ -22,17 +22,8 @@ class Page {
 	}
 
 	public function render() {
-		$this->adjustNavMenu();
+		$this->adjustNavLinks();
 		return $this->doc;
-	}
-
-	public static function isResourceUrl($url) {
-		$re = '/^.*(files|images)\/.*\-sc[0-9a-f]{13}(\-[^\.]+)?\..+$/';
-
-		return HtmlUtils::isRelativeURL($url) &&
-				preg_match($re, $url) &&
-				(strpos($url, 'javascript:') !== 0) &&
-				(strpos($url, '#') !== 0);
 	}
 
 	public function prefixResourceUrls($prefix) {
@@ -56,7 +47,7 @@ class Page {
 	}
 
 	public function setContainerContent($containerName, $content) {
-		foreach (phpQuery::pq('.' . $containerName, $this->doc) as $node) {
+		foreach (phpQuery::pq('.sc-content-' . $containerName, $this->doc) as $node) {
 			$container = phpQuery::pq($node, $this->doc);
 			$container->html($content);
 		}
@@ -75,25 +66,14 @@ class Page {
 	public function ensurePageId() {
 		$this->addMetadata();
 		phpQuery::pq('meta[content="sitecake"]', $this->doc)->attr('data-pageid', Utils::id());
-		//HtmlUtils::appendToHead($this->doc,
-		//	'<script id="scpageid" type="text/javascript">var scpageid="' . Utils::id() . '";</script>');
 	}
 
 	public function pageId() {
 		return phpQuery::pq('meta[content="sitecake"]', $this->doc)->attr('data-pageid');
-		//foreach (phpQuery::pq('#scpageid', $this->doc) as $node) {
-		//	$html = phpQuery::pq($node, $this->doc)->html();
-		//	return (preg_match('/\s+scpageid[\s\n]*=[\s\n]*["\']([^"]+)["\']/s', 
-		//		$html, $matches)) ? $matches[1] : false;
-		//}
-		//return false;
 	}
 
 	public function removePageId() {
 		phpQuery::pq('meta[content="sitecake"]', $this->doc)->removeAttr('data-pageid');
-		//foreach (phpQuery::pq('#scpageid', $this->doc) as $node) {
-		//	phpQuery::pq($node, $this->doc)->remove();
-		//}
 	}
 
 	public function appendCodeToHead($code) {
@@ -103,7 +83,7 @@ class Page {
 	protected function prefixContainerResourceUrls($container, $prefix) {
 		foreach (phpQuery::pq('a, img',	$container) as $node) {
 			HtmlUtils::prefixNodeAttrs($node, 'src,href,srcset', $prefix, function($url) {
-				return self::isResourceUrl($url);
+				return Utils::isResourceUrl($url);
 			});
 		}
 	}
@@ -111,7 +91,7 @@ class Page {
 	protected function unprefixContainerResourceUrls($container, $prefix) {
 		foreach (phpQuery::pq('a, img',	$container) as $node) {
 			HtmlUtils::unprefixNodeAttrs($node, 'src,href,srcset', $prefix, function($url) {
-				return self::isResourceUrl($url);
+				return Utils::isResourceUrl($url);
 			});
 		}
 	}
@@ -122,7 +102,7 @@ class Page {
 		preg_match_all("/[^\\s\"']*(?:files|images)\\/[^\\s]*\\-sc[0-9a-f]{13}(\-[^\.]+)?\\.[0-9a-zA-Z]+/", 
 			$html, $matches);
 		foreach ($matches[0] as $match) {
-			if (self::isResourceUrl($match)) {
+			if (Utils::isResourceUrl($match)) {
 				array_push($urls, $match);	
 			}
 		}
@@ -130,7 +110,15 @@ class Page {
 	}
 
 	protected function containerNodes() {
-		return phpQuery::pq('[class*="sc-content"]', $this->doc);
+		$containers = array();
+		foreach (phpQuery::pq('[class*="sc-content"]', $this->doc) as $node) {
+			$container = phpQuery::pq($node, $this->doc);
+			$class = $container->attr('class');
+			if (preg_match('/(^|\s)sc\-content(\-[^\s]+)*(\s|$)/', $class, $matches)) {
+				array_push($containers, $container);
+			}			
+		}
+		return $containers;
 	}
 
 	public function normalizeContainerNames() {
@@ -154,53 +142,31 @@ class Page {
 		}		
 	}
 	
+	/**
+	 * Returns a list of container names.
+	 * 
+	 * @return array a list of container names
+	 */
 	public function containers() {
 		if (!$this->_containers) {
 			$this->_containers = array();
 			foreach ($this->containerNodes() as $container) {
-				preg_match('/(^|\s)(sc-content-[^\s]+)/', 
-					$container->getAttribute('class'), $matches);
-				// the container is not a repeater
-				array_push($this->_containers, $matches[2]);
+				preg_match('/(^|\s)sc-content-([^\s]+)/', 
+					$container->attr('class'), $matches);
+				if (isset($matches[2])) {
+					array_push($this->_containers, $matches[2]);
+				}
 			}					
 		}
 		return $this->_containers;
 	}
-	
-	public static function isExternalNavLink($url) {
-		return (strpos($url, '/') !== false) || (strpos($url, 'http://') === 0) || 
-			(substr($url, -5) !== '.html');
-	}
 
-	protected function adjustNavMenu() {
-		foreach (phpQuery::pq('ul.sc-nav li a', $this->doc) as $node) {
+	protected function adjustNavLinks() {
+		foreach (phpQuery::pq('a', $this->doc) as $node) {
 			$href = $node->getAttribute('href');
-			if (!self::isExternalNavLink($href)) {
+			if (!Utils::isExternalNavLink($href)) {
 				$node->setAttribute('href', 'sc-admin.php?page=' . $href);
 			}
 		}
-	}
-	
-	/**
-	 * Ensures that the given page has the <code>scpageid</code>. If the 
-	 * <code>scpageid</code> is not present, a new ID value will be generated
-	 * and the page will be modified.
-	 *
-	 * @param string $path the page file path
-	 * @param string $html the page html (optional), if the html is ommited, the
-	 * 	page html will be loaded using the given path
-	 */
-	static function normalize_page_id($path, $html = null) {
-		$html = ($html == null) ? renderer::load_page($path) : $html;
-		$id = pages::page_id($html);
-		if (!$id) {
-			$code = renderer::wrapToScriptTag('var scpageid="'.util::id().'";');
-			renderer::save_page($path, 
-				preg_replace('/<\/head([^>]*)>/i', $code.'</head\1>', $html)); 
-		}
-	}
-	
-	static function setContent($tpl, $container, $content) {
-		phpQuery::pq('.' . $container, $tpl)->html($content);
 	}	
 }

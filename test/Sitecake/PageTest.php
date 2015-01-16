@@ -5,16 +5,8 @@ namespace Sitecake;
 use \phpQuery;
 
 class PageTest extends \PHPUnit_Framework_TestCase {
-	
-	public function test_isResourceUrl() {
-		$this->assertTrue(Page::isResourceUrl('files/doc-sc123456789abcd.doc'));
-		$this->assertTrue(Page::isResourceUrl('images/image-2-sc123456789abcd-00.jpg'));
-		$this->assertFalse(Page::isResourceUrl('#files/doc-sc123456789abcd.doc'));
-		$this->assertFalse(Page::isResourceUrl('javascript:files/doc-sc123456789abcd-00.doc'));
-		$this->assertFalse(Page::isResourceUrl('http://some.come/files/doc-sc123456789abcd.doc'));
-	}
 
-	public function test_prefixResourceUrls() {
+	function test_prefixResourceUrls() {
 		$html = '<html><head></head><body>'.
 			'<div>'.
 				'<a id="a1" href="a1">a1</a>'.
@@ -49,7 +41,7 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('p/draft/images/img1-sc123456789abcd-00.jpg 1, img2.jpg 2', phpQuery::pq('#img1', $doc)->elements[0]->getAttribute('srcset'));
 	}
 
-	public function test_unprefixResourceUrls() {
+	function test_unprefixResourceUrls() {
 		$html = '<html><head></head><body>'.
 			'<div>'.
 				'<a id="a1" href="p/a1">a1</a>'.
@@ -84,7 +76,7 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('draft/images/img1-sc123456789abcd-00.jpg 1, p/img2.jpg 2', phpQuery::pq('#img1', $doc)->elements[0]->getAttribute('srcset'));
 	}
 
-	public function test_listResourceUrls() {
+	function test_listResourceUrls() {
 		$html = '<html><head></head><body>'.
 			'<div>'.
 				'<a id="a1" href="p/a1">a1</a>'.
@@ -113,7 +105,7 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('draft/images/img1-sc123456789abcd-00.jpg', $urls[2]);
 	}
 
-	public function test_render() {
+	function test_render() {
 		$html = '<html><head></head><body>'.
 			'<ul class="sc-nav">'.
 				'<li><a id="a1" href="http://absolute.com">n1</a></li>'.
@@ -140,7 +132,7 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('/something.html', phpQuery::pq('#a5')->elements[0]->getAttribute('href'));
 	}
 
-	public function test_pageId() {
+	function test_pageId() {
 		$html1 = '<html><head>'.
 			'<meta name="application-name" content="sitecake" data-pageid="1234567890abcdefgh"/>'.
 			'</head><body>'.
@@ -166,7 +158,7 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 		$this->assertNull($page->pageId());		
 	}
 
-	public function test_ensurePageId() {
+	function test_ensurePageId() {
 		$html = '<html><head>'.
 			'</head><body>'.
 			'</body></html>';
@@ -190,7 +182,7 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 
 	}
 
-	public function test_removePageId() {
+	function test_removePageId() {
 		$html = '<html><head>'.
 			'<meta name="application-name" content="sitecake" data-pageid="1234567890abcdefgh"/>'.
 			'</head><body>'.
@@ -212,5 +204,109 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 		$o = phpQuery::newDocument((string)$page);	
 		$this->assertEquals(1, phpQuery::pq("meta[content='app']")->count());		
 	}
+
+	function test_toString() {
+		$html = '<html><head>'.
+			'</head><body>'.
+			'</body></html>';
+
+		$page = new Page($html);
+		$o = $page->__toString();
+
+		$this->assertTrue(is_string($o));		
+	}
+
+	function test_setContainerContent() {
+		$html = '<html><head>'.
+			'</head><body>'.
+			'<div class="block sc-content-cnt1"></div>'.
+			'</body></html>';
+
+		$page = new Page($html);
+
+		$page->setContainerContent('cnt1', '<p>test_content</p>');
+		$o = (string)$page;
+
+		$this->assertTrue(strpos($o, 'test_content') !== -1);
+	}
+
+	function test_containers() {
+		$html = '<html><head>'.
+			'</head><body>'.
+			'<div class="block sc-content-cnt1"></div>'.
+			'<div class=" sc-content-cnt2 "></div>'.
+			'<div class="sc-content-cnt3"></div>'.
+			'<div class="blocksc-content-cnt4"></div>'.
+			'<div class="blocksc-content- cnt5"></div>'.
+			'<div class="sc-content"></div>'.			
+			'</body></html>';
+
+		$page = new Page($html);
+		$cnts = $page->containers();
+
+		$this->assertTrue(is_array($cnts));
+		$this->assertEquals(3, count($cnts));
+		$this->assertTrue(in_array('cnt1', $cnts));		
+		$this->assertTrue(in_array('cnt2', $cnts));		
+		$this->assertTrue(in_array('cnt3', $cnts));		
+	}
+
+	function test_normalizeContainerNames() {
+		$html = '<html><head>'.
+			'</head><body>'.
+			'<div class="sc-content-cnt1"></div>'.
+			'<div class="sc-content"></div>'.
+			'<div class="sc-content-"></div>'.			
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->normalizeContainerNames();
+		$cnts = $page->containers();
+
+		$this->assertTrue(is_array($cnts));
+		$this->assertEquals(2, count($cnts));
+		$this->assertTrue(in_array('cnt1', $cnts));		
+		$this->assertEquals(0, strpos($cnts[1], '_cnt_'));					
+	}
+
+	function test_cleanupContainerNames() {
+		$html = '<html><head>'.
+			'</head><body>'.
+			'<div class="sc-content-cnt1"></div>'.
+			'<div class="sc-content-_cnt_12345"></div>'.
+			'<div class="test sc-content-_cnt_abcd some"></div>'.
+			'<div class="sc-content-"></div>'.			
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->cleanupContainerNames();
+		$cnts = $page->containers();
+
+		$this->assertTrue(is_array($cnts));
+		$this->assertEquals(1, count($cnts));
+		$this->assertTrue(in_array('cnt1', $cnts));							
+	}
+
+	function test_adjustNavLinks() {
+		$html = '<html><head>'.
+			'</head><body>'.
+			'<ul class="sc-nav">'.
+			'<li><a id="l1" href="about.html">link</a></li>'.
+			'<li><a id="l2" href="/doc.html"></a></li>'.
+			'<li><a id="l3" href="http://google.com"></a></li>'.
+			'</ul>'.
+			'<a id="l4" href="contact.html"></a>'.
+			'<div class="sc-content-cnt1"><a id="l5" href="home.html"></a></div>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$p = $page->render();
+
+		$this->assertEquals('sc-admin.php?page=about.html', phpQuery::pq('#l1', $p)->elements[0]->getAttribute('href'));
+		$this->assertEquals('/doc.html', phpQuery::pq('#l2', $p)->elements[0]->getAttribute('href'));
+		$this->assertEquals('http://google.com', phpQuery::pq('#l3', $p)->elements[0]->getAttribute('href'));
+		$this->assertEquals('sc-admin.php?page=contact.html', phpQuery::pq('#l4', $p)->elements[0]->getAttribute('href'));
+		$this->assertEquals('sc-admin.php?page=home.html', phpQuery::pq('#l5', $p)->elements[0]->getAttribute('href'));
+	}	
 
 }

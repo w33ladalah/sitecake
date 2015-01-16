@@ -207,9 +207,13 @@ class Site {
 		$pages = array();
 		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
 		foreach ($draftPagePaths as $pagePath) {
-			array_push($pages, array('path' => $pagePath, 'page' => new Page($this->fs->read($pagePath)));
+			array_push($pages, array('path' => $pagePath, 'page' => new Page($this->fs->read($pagePath))));
 		}
 		return $pages;
+	}
+
+	public function savePage($path, $page) {
+		$this->fs->update($path, (string)$page);
 	}
 
 	public function publishDraft() {

@@ -1,6 +1,8 @@
 <?php
 namespace Sitecake;
 
+use Sitecake\HtmlUtils;
+
 class Utils {
 	
 	/**
@@ -198,6 +200,32 @@ class Utils {
 		$str = trim($str, $options['delimiter']);
 		
 		return $options['lowercase'] ? mb_strtolower($str, 'UTF-8') : $str;
-	}	
+	}
+
+	/**
+	 * Checks if the given URL is a Sitecake resource URL.
+	 * 
+	 * @param  string  $url a URL to be tested
+	 * @return boolean      true if the URL is a Sitecake resource URL
+	 */
+	public static function isResourceUrl($url) {
+		$re = '/^.*(files|images)\/.*\-sc[0-9a-f]{13}(\-[^\.]+)?\..+$/';
+
+		return HtmlUtils::isRelativeURL($url) &&
+				preg_match($re, $url) &&
+				(strpos($url, 'javascript:') !== 0) &&
+				(strpos($url, '#') !== 0);
+	}
+
+	/**
+	 * Checks if the given URL is a URL to a resource that is not a local HTML page.
+	 * 
+	 * @param  string  $url URL to be checked
+	 * @return boolean true if the link is a URL to a resource that is not a local HTML page
+	 */
+	public static function isExternalNavLink($url) {
+		return (strpos($url, '/') !== false) || (strpos($url, 'http://') === 0) || 
+			(substr($url, -5) !== '.html');
+	}			
 
 }
