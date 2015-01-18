@@ -128,7 +128,7 @@ class Site {
 	/**
 	 * Returns a list of paths of CMS related files from the given
 	 * directory. It looks for HTML files, images and uploaded files.
-	 * Also, ignore entries from .scignore filter the output list.
+	 * It ignores entries from .scignore filter the output list.
 	 * 
 	 * @param  string $directory the root directory to start search into
 	 * @return array            the output paths list
@@ -137,8 +137,8 @@ class Site {
 		$ignores = $this->ignores;
 		return array_filter(array_merge(
 			$this->fs->listPatternPaths($directory, '/^[^\/]*\.html?$/'),
-			$this->fs->listPatternPaths($directory . '/images', '/^.*sc[0-9a-f]{13}(\-[^\.]+)?\..*$/'),
-			$this->fs->listPatternPaths($directory . '/files', '/^.*sc[0-9a-f]{13}(\-[^\.]+)?\..*$/')),
+			$this->fs->listPatternPaths($directory . '/images', '/^.*\-sc[0-9a-f]{13}[^\.]*\..+$/'),
+			$this->fs->listPatternPaths($directory . '/files', '/^.*\-sc[0-9a-f]{13}[^\.]*\..+$/')),
 			function($path) use ($ignores) {
 				foreach ($ignores as $ignore) {
 					if ($ignore !== '' && strpos($path, $ignore) === 0) {
@@ -173,11 +173,6 @@ class Site {
 		}
 	}
 
-	public function backup() {
-		$backupPath = $this->newBackupPath();
-		$this->fs->copyPaths($this->listScPaths(), '', $backupPath);
-	}
-
 	public function restore($version = 0) {
 
 	}
@@ -199,7 +194,7 @@ class Site {
 		if (in_array($pagePath, $draftPagePaths)) {
 			return new Page($this->fs->read($pagePath));
 		} else {
-			throw new FileNotFoundException();
+			throw new FileNotFoundException($pagePath);
 		}
 	}
 
@@ -213,14 +208,16 @@ class Site {
 	}
 
 	public function savePage($path, $page) {
+		$this->fs->write($this->draftDirtyMarkerPath());
 		$this->fs->update($path, (string)$page);
 	}
 
 	public function publishDraft() {
-		$this->backup();
-		$this->cleanupDraft();
-		$this->fs->deletePaths($this->listScPaths());
-		$this->fs->copyPaths($this->listScPaths($this->draftPath()), $this->draftPath(), '/');
+		if ($this->draftExists()) {
+			$this->backup();
+			$this->fs->deletePaths($this->listScPaths());
+			$this->fs->copyPaths($this->listScPaths($this->draftPath()), $this->draftPath(), '/');			
+		}
 	}
 
 	public function isDraftClean() {
@@ -250,12 +247,23 @@ class Site {
 		$this->fs->delete($this->draftMarkerPath());
 	}
 
-	protected function newBackupPath() {
-		$path = $this->backupPath() . '/v';
-		$this->fs->delete($path . '/**/*');
-		$this->fs->mkdir($path);
-
+	protected function newBackupContainerPath() {
+		$path = $this->backupPath() . '/' . date('YmdHis') . '-' . uniqid();
 		return $path;
+	}
+
+	// removes the N-th oldest backup
+	protected function cleanupBackup() {
+
+	}
+
+	public function backup() {
+		$backupPath = $this->newBackupContainerPath();
+		$this->fs->createDir($backupPath);
+		$this->fs->createDir($backupPath.'/images');
+		$this->fs->createDir($backupPath.'/files');
+		$this->fs->copyPaths($this->listScPaths(), '', $backupPath);
+		$this->cleanupBackup();
 	}
 
 	protected function decorateDraft() {

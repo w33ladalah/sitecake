@@ -12,7 +12,7 @@ class DeletePaths implements PluginInterface {
     }
 
     public function getMethod() {
-        return 'deletePatsh';
+        return 'deletePaths';
     }
 
     /**

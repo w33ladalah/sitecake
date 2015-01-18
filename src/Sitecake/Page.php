@@ -99,7 +99,7 @@ class Page {
 	protected function listContainerResourceUrls($container) {
 		$urls = array();
 		$html = (string)phpQuery::pq($container, $this->doc);
-		preg_match_all("/[^\\s\"']*(?:files|images)\\/[^\\s]*\\-sc[0-9a-f]{13}(\-[^\.]+)?\\.[0-9a-zA-Z]+/", 
+		preg_match_all("/[^\\s\"']*(?:files|images)\\/[^\\s]*\\-sc[0-9a-f]{13}[^\.]*\\.[0-9a-zA-Z]+/", 
 			$html, $matches);
 		foreach ($matches[0] as $match) {
 			if (Utils::isResourceUrl($match)) {

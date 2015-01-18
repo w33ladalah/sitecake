@@ -13,11 +13,11 @@ include('config.php');
 $app['DRAFT_CONTENT'] = 'sitecake-content';
 $app['PUBLIC_IMAGES'] = 'images';
 $app['PUBLIC_FILES'] = 'files';
-$app['SERVER_BASE'] = 'sitecake/2.0.4-SNAPSHOT/server';
+$app['SERVER_BASE'] = 'sitecake/2.1.0/server';
 $app['SERVICE_URL'] = $app['SERVER_BASE'] . '/admin.php';
 $app['SITECAKE_EDITOR_LOGIN_URL'] = 'sitecake/' .
-	'2.0.4-SNAPSHOT/client/publicmanager/publicmanager.nocache.js';
-$app['SITECAKE_EDITOR_EDIT_URL'] = 'sitecake/2.0.4-SNAPSHOT/client/' .
+	'2.1.0/client/publicmanager/publicmanager.nocache.js';
+$app['SITECAKE_EDITOR_EDIT_URL'] = 'sitecake/2.1.0/client/' .
 	'contentmanager/contentmanager.nocache.js';
 $app['CONFIG_URL'] = 'sitecake/editor.cfg';
 
@@ -100,7 +100,7 @@ $app['router'] = $app->share(function($app) {
 });
 
 $app['debug'] = true;
-$app['session']->set('loggedin', true);
+//$app['session']->set('loggedin', true);
 
 $app->match('/', function(Application $app, Request $request) {
 	$app['services']->load();

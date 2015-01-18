@@ -19,7 +19,7 @@ class Router {
 			$renderer = $this->services['renderer'];
 			$page = $req->query->has('page') ? $req->query->get('page') : 'index.html';
 			return $this->sm->isLoggedIn() ? 
-				$renderer->editResponse() : $renderer->loginResponse();
+				$renderer->editResponse($page) : $renderer->loginResponse();
 		} else {
 			$service = $req->query->get('service');
 			$action = $req->query->has('action') ? $req->query->get('action') : null;

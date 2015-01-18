@@ -28,8 +28,13 @@ class ContentService extends Service {
 			return new Response('Page ID is missing', 400);
 		}
 		$request->request->remove('scpageid');		
-		$this->content->save($id, $request->request->all());
+		$this->content->save($request->request->all());
 		return $this->json($request, array('status' => 0), 200);		
+	}
+
+	public function publish($request) {
+		$this->ctx['site']->publishDraft();
+		return $this->json($request, array('status' => 0), 200);
 	}
 
 }
