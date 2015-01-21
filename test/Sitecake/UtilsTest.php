@@ -99,6 +99,7 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 	
 	function test_isResourceUrl() {
 		$this->assertTrue(Utils::isResourceUrl('files/doc-sc123456789abcd.doc'));
+		$this->assertTrue(Utils::isResourceUrl('files/doc-sc123456789abcd00.doc'));
 		$this->assertTrue(Utils::isResourceUrl('images/image-2-sc123456789abcd-00.jpg'));
 		$this->assertFalse(Utils::isResourceUrl('#files/doc-sc123456789abcd.doc'));
 		$this->assertFalse(Utils::isResourceUrl('javascript:files/doc-sc123456789abcd-00.doc'));

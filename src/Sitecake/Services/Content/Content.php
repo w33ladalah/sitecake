@@ -13,7 +13,7 @@ class Content {
 		$this->site = $site;
 	}
 
-	public function save($id, $data) {
+	public function save($data) {
 		foreach ($data as $container => $content) {
 			// remove slashes
 			if (get_magic_quotes_gpc())

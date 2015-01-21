@@ -27,15 +27,19 @@ class Page {
 	}
 
 	public function prefixResourceUrls($prefix) {
-		foreach ($this->containerNodes() as $container) {
-			$this->prefixContainerResourceUrls($container, $prefix);
-		}
+		foreach (phpQuery::pq('a, img',	$this->doc) as $node) {
+			HtmlUtils::prefixNodeAttrs($node, 'src,href,srcset', $prefix, function($url) {
+				return Utils::isResourceUrl($url);
+			});
+		}		
 	}
 
 	public function unprefixResourceUrls($prefix) {
-		foreach ($this->containerNodes() as $container) {
-			$this->unprefixContainerResourceUrls($container, $prefix);
-		}		
+		foreach (phpQuery::pq('a, img',	$this->doc) as $node) {
+			HtmlUtils::unprefixNodeAttrs($node, 'src,href,srcset', $prefix, function($url) {
+				return Utils::isResourceUrl($url);
+			});
+		}				
 	}
 
 	public function listResourceUrls() {
@@ -78,22 +82,6 @@ class Page {
 
 	public function appendCodeToHead($code) {
 		HtmlUtils::appendToHead($this->doc, $code);		
-	}
-
-	protected function prefixContainerResourceUrls($container, $prefix) {
-		foreach (phpQuery::pq('a, img',	$container) as $node) {
-			HtmlUtils::prefixNodeAttrs($node, 'src,href,srcset', $prefix, function($url) {
-				return Utils::isResourceUrl($url);
-			});
-		}
-	}
-
-	protected function unprefixContainerResourceUrls($container, $prefix) {
-		foreach (phpQuery::pq('a, img',	$container) as $node) {
-			HtmlUtils::unprefixNodeAttrs($node, 'src,href,srcset', $prefix, function($url) {
-				return Utils::isResourceUrl($url);
-			});
-		}
 	}
 
 	protected function listContainerResourceUrls($container) {

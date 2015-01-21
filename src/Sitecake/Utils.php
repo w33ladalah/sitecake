@@ -209,7 +209,7 @@ class Utils {
 	 * @return boolean      true if the URL is a Sitecake resource URL
 	 */
 	public static function isResourceUrl($url) {
-		$re = '/^.*(files|images)\/.*\-sc[0-9a-f]{13}(\-[^\.]+)?\..+$/';
+		$re = '/^.*(files|images)\/.*\-sc[0-9a-f]{13}[^\.]*\..+$/';
 
 		return HtmlUtils::isRelativeURL($url) &&
 				preg_match($re, $url) &&

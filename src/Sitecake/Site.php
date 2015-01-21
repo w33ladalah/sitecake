@@ -136,7 +136,7 @@ class Site {
 	public function listScPaths($directory = '') {
 		$ignores = $this->ignores;
 		return array_filter(array_merge(
-			$this->fs->listPatternPaths($directory, '/^[^\/]*\.html?$/'),
+			$this->fs->listPatternPaths($directory, '/^.*\.html?$/'),
 			$this->fs->listPatternPaths($directory . '/images', '/^.*\-sc[0-9a-f]{13}[^\.]*\..+$/'),
 			$this->fs->listPatternPaths($directory . '/files', '/^.*\-sc[0-9a-f]{13}[^\.]*\..+$/')),
 			function($path) use ($ignores) {
@@ -207,21 +207,41 @@ class Site {
 		return $pages;
 	}
 
-	public function savePage($path, $page) {
-		$this->fs->write($this->draftDirtyMarkerPath());
+	public function savePage($path, $page) {	
+		$this->markDraftDirty();
 		$this->fs->update($path, (string)$page);
 	}
 
 	public function publishDraft() {
 		if ($this->draftExists()) {
 			$this->backup();
-			$this->fs->deletePaths($this->listScPaths());
-			$this->fs->copyPaths($this->listScPaths($this->draftPath()), $this->draftPath(), '/');			
+
+			$draftResources = $this->draftResources();
+			$publicResources = $this->listScPaths();
+
+			$forDeletion = array();
+			foreach ($publicResources as $publicResource) {
+				if (!in_array($this->draftPath().'/'.$publicResource, $draftResources)) {
+					array_push($forDeletion, $publicResource);
+				}
+			}
+			$this->fs->deletePaths($publicResources);			
+			$this->fs->copyPaths($draftResources, $this->draftPath(), '/');
+			$this->cleanupPublic();
+			$this->markDraftClean();
 		}
 	}
 
 	public function isDraftClean() {
-		return $this->fs->has($this->draftDirtyMarkerPath());
+		return !$this->fs->has($this->draftDirtyMarkerPath());
+	}
+
+	public function markDraftDirty() {
+		$this->fs->write($this->draftDirtyMarkerPath());
+	}
+
+	public function markDraftClean() {
+		$this->fs->delete($this->draftDirtyMarkerPath());
 	}
 
 	protected function draftDirtyMarkerPath() {
@@ -248,13 +268,30 @@ class Site {
 	}
 
 	protected function newBackupContainerPath() {
-		$path = $this->backupPath() . '/' . date('YmdHis') . '-' . uniqid();
+		$path = $this->backupPath() . '/' . date('Y-m-d-H.i.s') . '-' . substr(uniqid(), -2);
 		return $path;
 	}
 
-	// removes the N-th oldest backup
+	/**
+	 * Remove all backups except for the last recent five.
+	 */
 	protected function cleanupBackup() {
-
+		$backups = $this->fs->listContents($this->backupPath());
+		usort($backups, function($a, $b) {
+			if ($a['timestamp'] < $b['timestamp']) {
+				return -1;
+			} else if ($a['timestamp'] == $b['timestamp']) {
+				return 0;
+			} else {
+				return 1;
+			}
+		});
+		$backups = array_reverse($backups);
+		foreach ($backups as $idx => $backup) {
+			if ($idx > 4) {
+				$this->fs->deleteDir($backup['path']);
+			}
+		}
 	}
 
 	public function backup() {
@@ -266,24 +303,40 @@ class Site {
 		$this->cleanupBackup();
 	}
 
+	protected function draftBaseUrl() {
+		return $this->draftPath() . '/';
+	}
+
 	protected function decorateDraft() {
 		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
 		foreach ($draftPagePaths as $pagePath) {
 			$page = new Page($this->fs->read($pagePath));
 			$page->ensurePageId();
 			$page->normalizeContainerNames();
+			$page->prefixResourceUrls($this->draftBaseUrl());
 			$this->fs->update($pagePath, (string)$page);
 		}
 	}
 
-	protected function cleanupDraft() {
-		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
-		foreach ($draftPagePaths as $pagePath) {
+	protected function cleanupPublic() {
+		$pagePaths = $this->listScPagesPaths();
+		foreach ($pagePaths as $pagePath) {
 			$page = new Page($this->fs->read($pagePath));
 			$page->removePageId();
 			$page->cleanupContainerNames();
 			$page->removeMetadata();
+			$page->unprefixResourceUrls($this->draftBaseUrl());
 			$this->fs->update($pagePath, (string)$page);
 		}
+	}
+
+	protected function draftResources() {
+		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
+		$resources = array_merge(array(), $draftPagePaths);
+		foreach ($draftPagePaths as $pagePath) {
+			$page = new Page($this->fs->read($pagePath));
+			$resources = array_merge($resources, $page->listResourceUrls());
+		}
+		return array_unique($resources);
 	}		
 }
