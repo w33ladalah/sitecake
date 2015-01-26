@@ -4,15 +4,31 @@ Welcome to SiteCake!
 SiteCake is an easy to use, downloadable CMS (Content Managament System) for small websites, with a WYSIWYG, in-place, drag&drop content editor.
 A standard web hosting (web server and PHP 5.4+) is all you need to install and use it.
 
-More info could be found at [sitecake.com](http://sitecake.com). For documentation, check the [project's Wiki](http://github.com/sitecake/sitecake/wiki).
+For more info check the [Wiki](http://github.com/sitecake/sitecake/wiki).
 
 ## Quick Start
 
-[Download](https://github.com/sitecake/sitecake/downloads) the latest SiteCake, grab a SiteCake Theme from 
-[here](http://github.com/sitecake/sitecake-themes/downloads), extract archives to your web hosting directory and you 
-should be ready to start editing. Just access http://yourdomain.com/sc-admin.php (default password is _admin_) and have fun!
+Upload to your hosting:
 
-## Copyright and License
+* [SiteCake v2.0.3. release] (https://github.com/sitecake/sitecake/releases/tag/SCv2.0.3)
+* [Sample template] (http://sitecake.com/portfolio.zip)
+* Open `yourdomain.com/sc-admin.php` to start editing 
+
+
+##### For designers:
+
+* [SiteCake Basics](https://github.com/sitecake/sitecake/wiki/SiteCake-Basics)
+* [How to edit HTML page with SiteCake](https://github.com/sitecake/sitecake/wiki/How-to-edit-HTML-page-with-SiteCake) 
+* [User styles](http://github.com/sitecake/sitecake/wiki/User-Styles)
+
+
+
+##### For developers
+* [Building from the source](http://github.com/sitecake/sitecake/wiki/Building-from-the-source)
+ 
+
+
+#### Copyright and License
 
 Copyright 2012 SiteCake Corp
 
