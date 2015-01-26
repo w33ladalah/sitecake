@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="SiteCake" default="build" basedir="." description="SiteCake CMS">
-	<property name="version" value="2.1.0"/>
-	<property name="scedit.version" value="2.1.0"/>
+	<property name="version" value="2.1.1"/>
+	<property name="scedit.version" value="2.1.1"/>
 
 	<property name="build.dir" value="./build"/>
 	<property name="package.dir" value="${build.dir}/target"/>

@@ -13,11 +13,11 @@ include('config.php');
 $app['DRAFT_CONTENT'] = 'sitecake-content';
 $app['PUBLIC_IMAGES'] = 'images';
 $app['PUBLIC_FILES'] = 'files';
-$app['SERVER_BASE'] = 'sitecake/2.1.0/server';
+$app['SERVER_BASE'] = 'sitecake/${version}/server';
 $app['SERVICE_URL'] = $app['SERVER_BASE'] . '/admin.php';
 $app['SITECAKE_EDITOR_LOGIN_URL'] = 'sitecake/' .
-	'2.1.0/client/publicmanager/publicmanager.nocache.js';
-$app['SITECAKE_EDITOR_EDIT_URL'] = 'sitecake/2.1.0/client/' .
+	'${version}/client/publicmanager/publicmanager.nocache.js';
+$app['SITECAKE_EDITOR_EDIT_URL'] = 'sitecake/${version}/client/' .
 	'contentmanager/contentmanager.nocache.js';
 $app['CONFIG_URL'] = 'sitecake/editor.cfg';
 
