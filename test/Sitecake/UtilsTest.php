@@ -115,4 +115,24 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertFalse(Utils::isExternalNavLink('about.html'));
 	}
+
+	function test_resurlinfo() {
+		$info = Utils::resurlinfo('p1/p2/name-sc1234567890abcDEF.ex');
+		$this->assertEquals(array(
+			'path' => 'p1/p2',
+			'name' => 'name',
+			'id' => '1234567890abc',
+			'subid' => 'DEF',
+			'ext' => 'ex'
+		), $info);
+
+		$info = Utils::resurlinfo('n-a.me-sc1234567890abc.ex');
+		$this->assertEquals(array(
+			'path' => '',
+			'name' => 'n-a.me',
+			'id' => '1234567890abc',
+			'subid' => '',
+			'ext' => 'ex'
+		), $info);
+	}
 }

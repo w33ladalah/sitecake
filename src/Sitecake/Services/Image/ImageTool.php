@@ -34,7 +34,7 @@ class ImageTool {
 	}
 
 	protected function parseImgPathSet($id) {
-		$pathPattern = 
+		//$pathPattern = 
 		$this->fs->listPatternPaths($pathPattern);
 	}
 

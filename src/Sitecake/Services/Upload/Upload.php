@@ -23,7 +23,7 @@ class Upload {
 			throw new Exception('Forbidden extension');
 		}
 
-		$path = $this->path($fileInfo['filename'], $fileInfo['extension'], 
+		$path = $this->path($fileInfo['filename'], strtolower($fileInfo['extension']), 
 			$this->isImage($fileInfo['extension']));
 
 		$res = $this->fs->writeStream($path, fopen("php://input", 'r'));
@@ -42,6 +42,6 @@ class Upload {
 	protected function path($name, $extension, $isImage) {
 		return $this->draftPath .
 			($isImage ? '/images/' : '/files/') .
-			$name . '-sc' . uniqid() . '.' . $extension;
+			str_replace(' ', '_', $name) . '-sc' . uniqid() . '.' . $extension;
 	}
 }

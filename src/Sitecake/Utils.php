@@ -218,6 +218,24 @@ class Utils {
 	}
 
 	/**
+	 * Extracts information from a resource URL.
+	 * It returns path, name, id, subid and extension.
+	 * 
+	 * @param  string $url the URL to be deconstructed
+	 * @return array      URL components (path, name, id, subid, ext)
+	 */
+	public static function resurlinfo($url) {
+		preg_match('/((.*)\/)?([^\/]+)-sc([0-9a-fA-F]{13})([^\.]*)\.([^\.]+)$/', $url, $match);
+		return array(
+			'path' => $match[2],
+			'name' => $match[3],
+			'id' => $match[4],
+			'subid' => $match[5],
+			'ext' => $match[6]
+		);
+	}
+	
+	/**
 	 * Checks if the given URL is a URL to a resource that is not a local HTML page.
 	 * 
 	 * @param  string  $url URL to be checked

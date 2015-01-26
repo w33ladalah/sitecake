@@ -103,6 +103,11 @@ $app['debug'] = true;
 //$app['session']->set('loggedin', true);
 
 $app->match('/', function(Application $app, Request $request) {
+	// check if GD is present
+	if (!extension_loaded('gd')) {
+		throw new \Exception("GD lib (PHP extension) is required, but it's not loaded.");
+	}
+	
 	$app['services']->load();
 	return $app['router']->route($request);
 });

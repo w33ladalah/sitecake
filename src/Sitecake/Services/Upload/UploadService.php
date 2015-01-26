@@ -3,6 +3,7 @@
 namespace Sitecake\Services\Upload;
 
 use Sitecake\Services\Service;
+use Symfony\Component\HttpFoundation\Response;
 
 class UploadService extends Service {
 	const SERVICE_NAME = '_upload';
@@ -20,9 +21,20 @@ class UploadService extends Service {
 		$this->uploader = new Upload($ctx['fs'], $ctx['site']->draftPath());
 	}
 
+	public function save($request) {
+		$this->upload($request);
+	}
+
 	public function upload($request) {
-		$filename = $request->headers('');
+		if (!$request->headers->has('x-filename')) {
+			return new Response('Filename is missing (header X-FILENAME)', 400);
+		}
+		$filename = $request->headers->get('x-filename');
 		$res = $this->uploader->save($filename);
-		return $res ? 200 : 500;
+		if ($res === false) {
+			return $this->json($request, array('status' => 1, 'errMessage' => 'Unable to upload file'), 200);
+		} else {
+			return $this->json($request, array('status' => 0, 'url' => $res), 200);
+		}
 	}
 }
