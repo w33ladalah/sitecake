@@ -18,11 +18,7 @@ class UploadService extends Service {
 
 	public function __construct($ctx) {
 		$this->ctx = $ctx;
-		$this->uploader = new Upload($ctx['fs'], $ctx['site']->draftPath());
-	}
-
-	public function save($request) {
-		$this->upload($request);
+		$this->uploader = new Upload($ctx['fs']);
 	}
 
 	public function upload($request) {
@@ -30,7 +26,10 @@ class UploadService extends Service {
 			return new Response('Filename is missing (header X-FILENAME)', 400);
 		}
 		$filename = $request->headers->get('x-filename');
-		$res = $this->uploader->save($filename);
+		$pathinfo = pathinfo($filename);
+		$dpath = Utils::resurl($this->ctx['site']->draftPath().'/files', 
+			$pathinfo['filename'], null, null, $pathinfo['extension']);
+		$res = $this->uploader->save($dpath);
 		if ($res === false) {
 			return $this->json($request, array('status' => 1, 'errMessage' => 'Unable to upload file'), 200);
 		} else {

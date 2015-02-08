@@ -203,6 +203,31 @@ class Utils {
 	}
 
 	/**
+	 * Creates a resource URL out of the given components.
+	 *
+	 * @param  string $path  resource path prefix (directory) or full resource path (dir, name, ext)
+	 * @param  string $name  resource name
+	 * @param  string $id    13-digit resource ID (uniqid)
+	 * @param  string $subid resource additional id (classifier, subid)
+	 * @param  string $ext   extension
+	 * @return string        calculated resource path
+	 */
+	public static function resurl($path, $name = null, $id = null, $subid = null, $ext = null) {
+		$id = ($id == null) ? uniqid() : $id;
+		$subid = ($subid == null) ? '' : $subid;
+		if ($name == null || $ext == null) {
+			$pathinfo = pathinfo($path);
+			$name = ($name == null) ? $pathinfo['filename'] : $name; 
+			$ext = ($ext == null) ? $pathinfo['extension'] : $ext;
+			$path = ($pathinfo['dirname'] === '.') ? '' : $pathinfo['dirname'];
+		}
+		$path = $path . (($path === '' || substr($path, -1) === '/') ? '' : '/');
+		$name = str_replace(' ', '_', $name);
+		$ext = strtolower($ext);
+		return $path.$name.'-sc'.$id.$subid.'.'.$ext;
+	} 
+
+	/**
 	 * Checks if the given URL is a Sitecake resource URL.
 	 * 
 	 * @param  string  $url a URL to be tested
@@ -217,14 +242,7 @@ class Utils {
 				(strpos($url, '#') !== 0);
 	}
 
-	/**
-	 * Extracts information from a resource URL.
-	 * It returns path, name, id, subid and extension.
-	 * 
-	 * @param  string $url the URL to be deconstructed
-	 * @return array      URL components (path, name, id, subid, ext)
-	 */
-	public static function resurlinfo($url) {
+	private static function _resurlinfo($url) {
 		preg_match('/((.*)\/)?([^\/]+)-sc([0-9a-fA-F]{13})([^\.]*)\.([^\.]+)$/', $url, $match);
 		return array(
 			'path' => $match[2],
@@ -234,6 +252,25 @@ class Utils {
 			'ext' => $match[6]
 		);
 	}
+
+	/**
+	 * Extracts information from a resource URL.
+	 * It returns path, name, id, subid and extension.
+	 * 
+	 * @param  string|array $url a URL to be deconstructed or a list of URLs
+	 * @return array      URL components (path, name, id, subid, ext) or a list of URL components
+	 */
+	public static function resurlinfo($urls) {
+		if (is_array($urls)) {
+			$res = array();
+			foreach ($urls as $url) {
+				array_push($res, self::_resurlinfo($url));
+			}
+			return $res;
+		} else {
+			return self::_resurlinfo($urls);
+		}
+	}	
 	
 	/**
 	 * Checks if the given URL is a URL to a resource that is not a local HTML page.

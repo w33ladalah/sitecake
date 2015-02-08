@@ -184,7 +184,7 @@ class Site {
 		} else if (count($paths) > 0) {
 			return new Page($this->fs->read($paths[0]));
 		} else {
-			throw new FileNotFoundException();
+			throw new FileNotFoundException('No HTML page found');
 		}
 	}
 

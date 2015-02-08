@@ -113,6 +113,24 @@
 		<delete file="${package.dir}/sitecake/${version}/server/composer.lock"/>
 		<delete file="${package.dir}/sitecake/${version}/server/composer.json"/>
 
+		<!-- trim down vendor dir -->
+		<delete includeemptydirs="true">
+			<fileset dir="${package.dir}/sitecake/${version}/server/vendor">
+				<include name="*/"/>
+				<exclude name="composer/"/>
+				<exclude name="electrolinux/phpquery/phpQuery/"/>
+				<exclude name="league/flysystem/src/"/>
+				<exclude name="plczip/plczip/"/>
+				<exclude name="pimple/pimple/lib/"/>
+				<exclude name="psr/log/Psr/Log/"/>
+				<exclude name="silex/silex/src/Silex/"/>
+				<exclude name="smottt/wideimage/lib/WideImage/"/>
+				<exclude name="jdesrosiers/silex-cors-provider/"/>
+				<exclude name="symfony/"/>
+				<exclude name="autoload.php"/>
+			</fileset>
+		</delete>
+
 		<tar destfile="${build.dir}/sitecake-${version}.tar.bz2"
 				basedir="${package.dir}" compression="bzip2">
 			<fileset dir="${package.dir}">

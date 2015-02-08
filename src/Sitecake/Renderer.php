@@ -45,12 +45,12 @@ class Renderer {
 			"editMode: false, " .
 			'serverVersionId: "SiteCake CMS ${version}", ' .
 			"serviceUrl:'" . $this->options['SERVICE_URL'] . "', " .
-			"configUrl:'" . $this->options['CONFIG_URL'] . "', " .
+			"configUrl:'" . $this->options['EDITOR_CONFIG_URL'] . "', " .
 			"forceLoginDialog: true" .
 		"};";
 				
 		return HtmlUtils::wrapToScriptTag($globals) .
-			HtmlUtils::scriptTag($this->options['SITECAKE_EDITOR_LOGIN_URL']);
+			HtmlUtils::scriptTag($this->options['EDITOR_LOGIN_URL']);
 	}
 
 	protected function clientCodeEditor($published) {
@@ -58,11 +58,11 @@ class Renderer {
 			"editMode: true, " .
 			'serverVersionId: "SiteCake CMS ${version}", ' .
 			"serviceUrl:'" . $this->options['SERVICE_URL'] . "', " .
-			"configUrl:'" . $this->options['CONFIG_URL'] . "', " .				
+			"configUrl:'" . $this->options['EDITOR_CONFIG_URL'] . "', " .				
 			"draftPublished: " . ($published ? 'true' : 'false') .
 		"};";
 				
 		return HtmlUtils::wrapToScriptTag($globals) .
-			HtmlUtils::scriptTag($this->options['SITECAKE_EDITOR_EDIT_URL']);
+			HtmlUtils::scriptTag($this->options['EDITOR_EDIT_URL']);
 	}
 }

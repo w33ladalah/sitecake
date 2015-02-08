@@ -5,44 +5,50 @@ date_default_timezone_set('UTC');
 
 require('vendor/autoload.php');
 
-$app = new Silex\Application();
-
-// include server-side configuration
-include('config.php');
-
-$app['DRAFT_CONTENT'] = 'sitecake-content';
-$app['PUBLIC_IMAGES'] = 'images';
-$app['PUBLIC_FILES'] = 'files';
-$app['SERVER_BASE'] = 'sitecake/${version}/server';
-$app['SERVICE_URL'] = $app['SERVER_BASE'] . '/admin.php';
-$app['SITECAKE_EDITOR_LOGIN_URL'] = 'sitecake/' .
-	'${version}/client/publicmanager/publicmanager.nocache.js';
-$app['SITECAKE_EDITOR_EDIT_URL'] = 'sitecake/${version}/client/' .
-	'contentmanager/contentmanager.nocache.js';
-$app['CONFIG_URL'] = 'sitecake/editor.cfg';
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local as AdapterLocal;
+use League\Flysystem\Adapter\Ftp as AdapterFtp;
+use JDesrosiers\Silex\Provider\CorsServiceProvider;
+
+// instantiate Silex application
+$app = new Silex\Application();
+
+// An absolute filesystem path to the site root directory (where sc-admin.php is located too).
+// It is used only to instantiate the filesystem abstraction. From this point on, all
+// paths are relative (to the BASE_DIR) and all paths can be used as relative URLs as well.
+$app['BASE_DIR'] = realpath(__DIR__ . '/../../../');
+
+// a path (relative URL) to the CMS working directory (draft, tmp, backup, etc.) 
+$app['DRAFT_CONTENT'] = 'sitecake-content';
+
+// a URL relative to sc-admin.php that Sitecake editor is using as the entry point
+// to the CMS service API
+$app['SERVICE_URL'] = 'sitecake/${version}/server/admin.php';
+
+// a URL relative to sc-admin.php that Sitecake editor is using to load the login module
+$app['EDITOR_LOGIN_URL'] = 'sitecake/${version}/client/publicmanager/publicmanager.nocache.js';
+
+// a URL relative to sc-admin.php that Sitecake editor is using to load the editor module
+$app['EDITOR_EDIT_URL'] = 'sitecake/${version}/client/contentmanager/contentmanager.nocache.js';
+
+// a URL relative to sc-admin.php that Sitecake editor is using to load the editor configuration
+$app['EDITOR_CONFIG_URL'] = 'sitecake/editor.cfg';
+
+// include the server-side configuration that user is expected to modify
+include('config.php');
 
 // global error handler
 $app->error(function (\LogicException $e, $code) {
     return new Response("Exception: " . $e->getMessage() . "\n\r" . $e->getTraceAsString(), 500);
 });
 
-// CORS enabled
-$app->after(function (Request $request, Response $response) {
-    $response->headers->set('Access-Control-Allow-Origin', '*');
-});
-
-use League\Flysystem\Filesystem;
-use League\Flysystem\Adapter\Local as AdapterLocal;
-use League\Flysystem\Adapter\Ftp as AdapterFtp;
-
 // configure the abstract file system
 if ($app['filesystem.adapter'] == 'local') {
 	$app['fs'] = $app->share(function($app) {
-		return new Filesystem(new AdapterLocal(realpath(__DIR__ . '/../../../')));
+		return new Filesystem(new AdapterLocal($app['BASE_DIR']));
 	});
 } else if ($app['filesystem.adapter'] == 'ftp') {
 	$app['fs'] = $app->share(function($app) {
@@ -99,10 +105,7 @@ $app['router'] = $app->share(function($app) {
 	return new Sitecake\Router($app['sm'], $app);
 });
 
-$app['debug'] = true;
-//$app['session']->set('loggedin', true);
-
-$app->match('/', function(Application $app, Request $request) {
+function hndlr(Application $app, Request $request) {
 	// check if GD is present
 	if (!extension_loaded('gd')) {
 		throw new \Exception("GD lib (PHP extension) is required, but it's not loaded.");
@@ -110,6 +113,12 @@ $app->match('/', function(Application $app, Request $request) {
 	
 	$app['services']->load();
 	return $app['router']->route($request);
-});
+}
+
+$app->match('/', hndlr)->method("GET");
+$app->match('/', hndlr)->method("POST");
+
+$app->register(new CorsServiceProvider(), array());
+$app->after($app["cors"]);
 
 $app->run();
