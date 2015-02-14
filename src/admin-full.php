@@ -82,7 +82,7 @@ $app['auth'] = $app->share(function($app) {
 });
 
 $app['site'] = $app->share(function($app) {
-	return new Sitecake\Site($app['fs']);
+	return new Sitecake\Site($app['fs'], $app);
 });
 
 $app['flock'] = $app->share(function($app) {
@@ -105,7 +105,7 @@ $app['router'] = $app->share(function($app) {
 	return new Sitecake\Router($app['sm'], $app);
 });
 
-function hndlr(Application $app, Request $request) {
+$hndlr = function(Application $app, Request $request) {
 	// check if GD is present
 	if (!extension_loaded('gd')) {
 		throw new \Exception("GD lib (PHP extension) is required, but it's not loaded.");
@@ -113,10 +113,10 @@ function hndlr(Application $app, Request $request) {
 	
 	$app['services']->load();
 	return $app['router']->route($request);
-}
+};
 
-$app->match('/', hndlr)->method("GET");
-$app->match('/', hndlr)->method("POST");
+$app->match('/', $hndlr)->method("GET");
+$app->match('/', $hndlr)->method("POST");
 
 $app->register(new CorsServiceProvider(), array());
 $app->after($app["cors"]);

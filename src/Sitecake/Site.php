@@ -8,6 +8,8 @@ use Sitecake\Exception\FileNotFoundException;
 
 class Site {
 	
+	protected $ctx;
+
 	protected $fs;
 
 	protected $tmp;
@@ -18,7 +20,8 @@ class Site {
 
 	protected $ignores;
 
-	public function __construct(FilesystemInterface $fs) {
+	public function __construct(FilesystemInterface $fs, $ctx) {
+		$this->ctx = $ctx;
 		$this->fs = $fs;
 
 		$this->ensureDirs();
@@ -290,7 +293,7 @@ class Site {
 		});
 		$backups = array_reverse($backups);
 		foreach ($backups as $idx => $backup) {
-			if ($idx > 4) {
+			if ($idx >= $this->ctx['site.number_of_backups']) {
 				$this->fs->deleteDir($backup['path']);
 			}
 		}
