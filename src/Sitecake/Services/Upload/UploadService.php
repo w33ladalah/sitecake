@@ -4,6 +4,7 @@ namespace Sitecake\Services\Upload;
 
 use Sitecake\Services\Service;
 use Symfony\Component\HttpFoundation\Response;
+use Sitecake\Utils;
 
 class UploadService extends Service {
 	const SERVICE_NAME = '_upload';
@@ -12,13 +13,14 @@ class UploadService extends Service {
 		return self::SERVICE_NAME;
 	}
 
-	protected $ctx;
+	protected static $forbidden = array('php', 'php5', 'php4', 'php3', 'phtml', 'phpt');
 
-	protected $uploader;
+	protected $fs;
+	protected $draftPath;
 
 	public function __construct($ctx) {
-		$this->ctx = $ctx;
-		$this->uploader = new Upload($ctx['fs']);
+		$this->fs = $ctx['fs'];
+		$this->draftPath = $ctx['site']->draftPath();
 	}
 
 	public function upload($request) {
@@ -27,13 +29,25 @@ class UploadService extends Service {
 		}
 		$filename = $request->headers->get('x-filename');
 		$pathinfo = pathinfo($filename);
-		$dpath = Utils::resurl($this->ctx['site']->draftPath().'/files', 
+		$dpath = Utils::resurl($this->draftPath.'/files', 
 			$pathinfo['filename'], null, null, $pathinfo['extension']);
-		$res = $this->uploader->save($dpath);
+
+		if (!$this->isSafeExtension($pathinfo['extension'])) {
+			return $this->json($request, array('status' => 1, 
+				'errMessage' => 'Forbidden file extension '.$pathinfo['extension']), 200);
+		}
+
+		$res = $this->fs->writeStream($dpath, fopen("php://input", 'r'));
+
 		if ($res === false) {
-			return $this->json($request, array('status' => 1, 'errMessage' => 'Unable to upload file'), 200);
+			return $this->json($request, array('status' => 1, 
+				'errMessage' => 'Unable to upload file '.$pathinfo['filename'].'.'.$pathinfo['extension']), 200);
 		} else {
 			return $this->json($request, array('status' => 0, 'url' => $res), 200);
 		}
 	}
+
+	protected function isSafeExtension($ext) {
+		return !in_array(strtolower($ext), self::$forbidden);
+	}	
 }
