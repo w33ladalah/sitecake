@@ -90,7 +90,7 @@ $app['flock'] = $app->share(function($app) {
 });
 
 $app['sm'] = $app->share(function($app) {
-	return new Sitecake\SessionManager($app['session'], $app['flock'], $app['auth']);
+	return new Sitecake\SessionManager($app['session'], $app['flock'], $app['auth'], $app['site']);
 });
 
 $app['renderer'] = $app->share(function($app) {

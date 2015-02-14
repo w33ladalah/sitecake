@@ -173,6 +173,8 @@ class Site {
 	public function startEdit() {
 		if (!$this->draftExists()) {
 			$this->startDraft();
+		} else {
+			$this->cleanupDraft();
 		}
 	}
 
@@ -308,6 +310,10 @@ class Site {
 		$this->cleanupBackup();
 	}
 
+	public function editSessionStart() {
+
+	}
+
 	protected function draftBaseUrl() {
 		return $this->draftPath() . '/';
 	}
@@ -332,6 +338,16 @@ class Site {
 			$page->removeMetadata();
 			$page->unprefixResourceUrls($this->draftBaseUrl());
 			$this->fs->update($pagePath, (string)$page);
+		}
+	}
+
+	protected function cleanupDraft() {
+		$draftResources = $this->draftResources();
+		$allResources = $this->listScPaths($this->draftPath());
+		foreach ($allResources as $resource) {
+			if (!in_array($resource, $draftResources)) {
+				$this->fs->delete($resource);
+			}
 		}
 	}
 

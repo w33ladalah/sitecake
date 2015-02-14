@@ -4,7 +4,6 @@ namespace Sitecake\Services\Image;
 
 use Sitecake\Utils;
 use Sitecake\Services\Service;
-use Sitecake\Services\Upload\Upload;
 use Symfony\Component\HttpFoundation\Response;
 use \WideImage\WideImage;
 
