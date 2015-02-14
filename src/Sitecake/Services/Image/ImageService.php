@@ -25,8 +25,6 @@ class ImageService extends Service {
 
 	public function __construct($ctx) {
 		$this->ctx = $ctx;
-		$this->uploader = new Upload($ctx['fs']);
-		$this->imageTool = new ImageTool($ctx['fs'], $ctx['site']->draftPath().'/images');
 	}
 
 	public function upload($request) {
