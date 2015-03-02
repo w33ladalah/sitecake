@@ -24,3 +24,13 @@ $app['filesystem.adapter.config'] = array(
     'port' => 21
 );
 */
+
+// the number of the recent site versions to be kept
+$app['site.number_of_backups'] = 2;
+
+// a list of image widths in pixels that would be used for generating
+// images for srcset 
+$app['image.srcset_widths'] = array(1280, 960, 640, 320);
+// a max relative diff (in percents) between two image widths in pixels
+// so they could be considered similar
+$app['image.srcset_width_maxdiff'] = 20;

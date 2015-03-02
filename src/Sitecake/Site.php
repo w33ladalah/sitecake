@@ -8,6 +8,8 @@ use Sitecake\Exception\FileNotFoundException;
 
 class Site {
 	
+	protected $ctx;
+
 	protected $fs;
 
 	protected $tmp;
@@ -18,7 +20,8 @@ class Site {
 
 	protected $ignores;
 
-	public function __construct(FilesystemInterface $fs) {
+	public function __construct(FilesystemInterface $fs, $ctx) {
+		$this->ctx = $ctx;
 		$this->fs = $fs;
 
 		$this->ensureDirs();
@@ -170,6 +173,8 @@ class Site {
 	public function startEdit() {
 		if (!$this->draftExists()) {
 			$this->startDraft();
+		} else {
+			$this->cleanupDraft();
 		}
 	}
 
@@ -184,7 +189,7 @@ class Site {
 		} else if (count($paths) > 0) {
 			return new Page($this->fs->read($paths[0]));
 		} else {
-			throw new FileNotFoundException();
+			throw new FileNotFoundException('No HTML page found');
 		}
 	}
 
@@ -290,7 +295,7 @@ class Site {
 		});
 		$backups = array_reverse($backups);
 		foreach ($backups as $idx => $backup) {
-			if ($idx > 4) {
+			if ($idx >= $this->ctx['site.number_of_backups']) {
 				$this->fs->deleteDir($backup['path']);
 			}
 		}
@@ -303,6 +308,10 @@ class Site {
 		$this->fs->createDir($backupPath.'/files');
 		$this->fs->copyPaths($this->listScPaths(), '', $backupPath);
 		$this->cleanupBackup();
+	}
+
+	public function editSessionStart() {
+
 	}
 
 	protected function draftBaseUrl() {
@@ -329,6 +338,16 @@ class Site {
 			$page->removeMetadata();
 			$page->unprefixResourceUrls($this->draftBaseUrl());
 			$this->fs->update($pagePath, (string)$page);
+		}
+	}
+
+	protected function cleanupDraft() {
+		$draftResources = $this->draftResources();
+		$allResources = $this->listScPaths($this->draftPath());
+		foreach ($allResources as $resource) {
+			if (!in_array($resource, $draftResources)) {
+				$this->fs->delete($resource);
+			}
 		}
 	}
 

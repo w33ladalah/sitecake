@@ -116,6 +116,23 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertFalse(Utils::isExternalNavLink('about.html'));
 	}
 
+	function test_resurl() {
+		$this->assertTrue(preg_match('/^name\-sc[0-9a-f]{13}\.ext$/', Utils::resurl('name.ext')) === 1);
+		$this->assertTrue(preg_match('/^\/name\-sc[0-9a-f]{13}\.ext$/', Utils::resurl('/name.eXt')) === 1);
+		$this->assertTrue(preg_match('/^na\-m\.e\-sc[0-9a-f]{13}\.ext$/', Utils::resurl('na-m.e.ext')) === 1);
+		$this->assertTrue(preg_match('/^path\/name\-sc[0-9a-f]{13}\.ext$/', Utils::resurl('path/name.ext')) === 1);
+
+		$this->assertEquals('path/name-sc1234567890123-sub.ext', 
+			Utils::resurl('path', 'name', '1234567890123', '-sub', 'ext'));
+
+		$this->assertEquals('name-sc1234567890123-sub.ext', 
+			Utils::resurl('', 'name', '1234567890123', '-sub', 'ext'));
+
+		$this->assertEquals('name-sc1234567890123.ext', 
+			Utils::resurl('', 'name', '1234567890123', null, 'ext'));
+	}
+
+
 	function test_resurlinfo() {
 		$info = Utils::resurlinfo('p1/p2/name-sc1234567890abcDEF.ex');
 		$this->assertEquals(array(
@@ -133,6 +150,24 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 			'id' => '1234567890abc',
 			'subid' => '',
 			'ext' => 'ex'
+		), $info);
+
+		$info = Utils::resurlinfo(array('p1/n1-sc1234567890123.ext', 'p2/n2-sc1234567890123.ext'));
+		$this->assertEquals(array(
+			array(
+				'path' => 'p1',
+				'name' => 'n1',
+				'id' => '1234567890123',
+				'subid' => '',
+				'ext' => 'ext'				
+			),
+			array(
+				'path' => 'p2',
+				'name' => 'n2',
+				'id' => '1234567890123',
+				'subid' => '',
+				'ext' => 'ext'				
+			)
 		), $info);
 	}
 }

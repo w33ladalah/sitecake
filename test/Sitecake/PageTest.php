@@ -86,7 +86,7 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 			'</div>'.
 			'<div class="sc-content">'.
 				'<a id="a3" href="p/files/a3-sc123456789abcd.doc">a3</a>'.
-				'<img id="img1" src="p/images/img1-sc123456789abcd-00.jpg" srcset="draft/images/img1-sc123456789abcd-00.jpg 1, p/img2.jpg 2"/>'.
+				'<img id="img1" src="p/images/img1-sc123456789abcd-00.jpg" srcset="draft/images/img1-sc123456789abcd-00.jpg 451w,draft/images/img2-sc123456789abcd-00.jpg 300w, p/img2.jpg 200w"/>'.
 			'</div>'.
 			'<div class="sc-content sc-content-2">'.
 				'<a id="a4" href="javascript:p/files/a4-sc123456789abcd.doc">a4</a>'.
@@ -99,10 +99,12 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 
 		$urls = $page->listResourceUrls();
 
-		$this->assertEquals(3, count($urls));
+		$this->assertEquals(4, count($urls));
 		$this->assertEquals('p/files/a3-sc123456789abcd.doc', $urls[0]);
 		$this->assertEquals('p/images/img1-sc123456789abcd-00.jpg', $urls[1]);
 		$this->assertEquals('draft/images/img1-sc123456789abcd-00.jpg', $urls[2]);
+		$this->assertEquals('draft/images/img2-sc123456789abcd-00.jpg', $urls[3]);
+		
 	}
 
 	function test_render() {

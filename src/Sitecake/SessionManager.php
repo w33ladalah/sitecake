@@ -14,10 +14,13 @@ class SessionManager implements SessionManagerInterface {
 
 	protected $auth;
 
-	public function __construct(SessionInterface $session, FileLock $fileLock, AuthInterface $auth) {
+	protected $site;
+
+	public function __construct(SessionInterface $session, FileLock $fileLock, AuthInterface $auth, $site) {
 		$this->session = $session;
 		$this->fileLock = $fileLock;
 		$this->auth = $auth;
+		$this->site = $site;
 	}
 
 	/**
@@ -40,6 +43,7 @@ class SessionManager implements SessionManagerInterface {
 			} else {
 				$this->session->set('loggedin', true);
 				$this->fileLock->set('login', self::SESSION_TIMEOUT);
+				$this->site->editSessionStart();
 				return 0;
 			}
 		} else {

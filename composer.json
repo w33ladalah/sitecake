@@ -1,7 +1,7 @@
 {
 	"name": "sitecake/sitecake-cms",
     "description": "SiteCake - a simple, drag and drop CMS",
-	"version": "2.1.0",
+	"version": "2.1.1",
     "type": "project",
     "keywords": [ "cms" ],
     "homepage": "http://sitecake.com",
@@ -25,6 +25,7 @@
 
     "require": {
         "silex/silex": "~1.2",
+        "jdesrosiers/silex-cors-provider": "~0.1",
         "symfony/translation": "~2.3",
         "symfony/config": "~2.3",
         "symfony/yaml": "~2.3",        
