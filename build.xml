@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="SiteCake" default="build" basedir="." description="SiteCake CMS">
-	<property name="version" value="2.1.1"/>
-	<property name="scedit.version" value="2.1.1"/>
+	<property name="version" value="2.2.1"/>
+	<property name="scedit.version" value="2.2.1"/>
 
 	<property name="build.dir" value="./build"/>
 	<property name="package.dir" value="${build.dir}/target"/>
@@ -130,13 +130,6 @@
 				<exclude name="autoload.php"/>
 			</fileset>
 		</delete>
-
-		<tar destfile="${build.dir}/sitecake-${version}.tar.bz2"
-				basedir="${package.dir}" compression="bzip2">
-			<fileset dir="${package.dir}">
-				<include name="**/**" />
-			</fileset>
-		</tar>
 
 		<zip destfile="${build.dir}/sitecake-${version}.zip"
 				basedir="${package.dir}">

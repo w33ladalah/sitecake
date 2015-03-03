@@ -1,6 +1,6 @@
 <?php
-ini_set('display_errors','Off');
-ini_set('display_warnings', 'Off');
+ini_set('display_errors','On');
+ini_set('display_warnings', 'On');
 date_default_timezone_set('UTC');
 
 require('vendor/autoload.php');
@@ -15,6 +15,7 @@ use JDesrosiers\Silex\Provider\CorsServiceProvider;
 
 // instantiate Silex application
 $app = new Silex\Application();
+$app['debug'] = true;
 
 // An absolute filesystem path to the site root directory (where sc-admin.php is located too).
 // It is used only to instantiate the filesystem abstraction. From this point on, all
