@@ -1,8 +1,4 @@
 <?php
-ini_set('display_errors','On');
-ini_set('display_warnings', 'On');
-date_default_timezone_set('UTC');
-
 require('vendor/autoload.php');
 
 use Symfony\Component\HttpFoundation\Response;
