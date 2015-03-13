@@ -243,7 +243,7 @@ class Site {
 
 	public function markDraftDirty() {
 		if (!$this->fs->has($this->draftDirtyMarkerPath())) {
-			$this->fs->write($this->draftDirtyMarkerPath());
+			$this->fs->write($this->draftDirtyMarkerPath(), '');
 		}
 	}
 
@@ -265,7 +265,7 @@ class Site {
 
 	protected function startDraft() {	
 		$this->fs->copyPaths($this->listScPaths(), '', $this->draftPath());
-		$this->fs->write($this->draftMarkerPath());
+		$this->fs->write($this->draftMarkerPath(), '');
 		$this->decorateDraft();
 	}
 
