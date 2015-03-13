@@ -13,25 +13,22 @@ use JDesrosiers\Silex\Provider\CorsServiceProvider;
 $app = new Silex\Application();
 $app['debug'] = true;
 
-// An absolute filesystem path to the site root directory (where sc-admin.php is located too).
+// An absolute filesystem path to the site root directory (where sitecake.php is located too).
 // It is used only to instantiate the filesystem abstraction. From this point on, all
 // paths are relative (to the BASE_DIR) and all paths can be used as relative URLs as well.
 $app['BASE_DIR'] = realpath(__DIR__ . '/../../../');
 
-// a path (relative URL) to the CMS working directory (draft, tmp, backup, etc.) 
-$app['DRAFT_CONTENT'] = 'sitecake-content';
-
-// a URL relative to sc-admin.php that Sitecake editor is using as the entry point
+// a URL relative to sitecake.php that Sitecake editor is using as the entry point
 // to the CMS service API
 $app['SERVICE_URL'] = 'sitecake/${version}/server/admin.php';
 
-// a URL relative to sc-admin.php that Sitecake editor is using to load the login module
+// a URL relative to sitecake.php that Sitecake editor is using to load the login module
 $app['EDITOR_LOGIN_URL'] = 'sitecake/${version}/client/publicmanager/publicmanager.nocache.js';
 
-// a URL relative to sc-admin.php that Sitecake editor is using to load the editor module
+// a URL relative to sitecake.php that Sitecake editor is using to load the editor module
 $app['EDITOR_EDIT_URL'] = 'sitecake/${version}/client/contentmanager/contentmanager.nocache.js';
 
-// a URL relative to sc-admin.php that Sitecake editor is using to load the editor configuration
+// a URL relative to sitecake.php that Sitecake editor is using to load the editor configuration
 $app['EDITOR_CONFIG_URL'] = 'sitecake/editor.cfg';
 
 // include the server-side configuration that user is expected to modify

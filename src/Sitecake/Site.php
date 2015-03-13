@@ -49,22 +49,22 @@ class Site {
 		}		
 		// check/create sitecake-content
 		try {
-			if (!$this->fs->ensureDir('sitecake-content')) {
-				throw new LogicException('Could not ensure that the directory /sitecake-content is present and writtable.');
+			if (!$this->fs->ensureDir('sitecake-temp')) {
+				throw new LogicException('Could not ensure that the directory /sitecake-temp is present and writtable.');
 			}
 		} catch (RuntimeException $e) {
-			throw new LogicException('Could not ensure that the directory /sitecake-content is present and writtable.');
+			throw new LogicException('Could not ensure that the directory /sitecake-temp is present and writtable.');
 		}		
-		// check/create sitecake-content/<workid>
+		// check/create sitecake-temp/<workid>
 		try {
-			$work = $this->fs->randomDir('sitecake-content');
+			$work = $this->fs->randomDir('sitecake-temp');
 			if ($work === false) {
-				throw new LogicException('Could not ensure that the work directory in /sitecake-content is present and writtable.');
+				throw new LogicException('Could not ensure that the work directory in /sitecake-temp is present and writtable.');
 			}
 		} catch (RuntimeException $e) {
-			throw new LogicException('Could not ensure that the work directory in /sitecake-content is present and writtable.');
+			throw new LogicException('Could not ensure that the work directory in /sitecake-temp is present and writtable.');
 		}	
-		// check/create sitecake-content/<workid>/tmp
+		// check/create sitecake-temp/<workid>/tmp
 		try {
 			$this->tmp = $this->fs->ensureDir($work . '/tmp');
 			if ($this->tmp === false) {
@@ -73,7 +73,7 @@ class Site {
 		} catch (RuntimeException $e) {
 			throw new LogicException('Could not ensure that the directory ' . $work . '/tmp is present and writtable.');
 		}		
-		// check/create sitecake-content/<workid>/draft
+		// check/create sitecake-temp/<workid>/draft
 		try {
 			$this->draft = $this->fs->ensureDir($work . '/draft');
 			if ($this->draft === false) {
@@ -81,16 +81,25 @@ class Site {
 			}
 		} catch (RuntimeException $e) {
 			throw new LogicException('Could not ensure that the directory ' . $work . '/draft is present and writtable.');
-		}		
-		// check/create sitecake-content/<workid>/backup
+		}
+
+		// check/create sitecake-backup
 		try {
-			$this->backup = $this->fs->ensureDir($work . '/backup');
-			if ($this->backup === false) {
-				throw new LogicException('Could not ensure that the directory ' . $work . '/backup is present and writtable.');
+			if (!$this->fs->ensureDir('sitecake-backup')) {
+				throw new LogicException('Could not ensure that the directory /sitecake-backup is present and writtable.');
 			}
 		} catch (RuntimeException $e) {
-			throw new LogicException('Could not ensure that the directory ' . $work . '/backup is present and writtable.');
-		}	
+			throw new LogicException('Could not ensure that the directory /sitecake-backup is present and writtable.');
+		}
+		// check/create sitecake-backup/<workid>
+		try {
+			$this->backup = $this->fs->randomDir('sitecake-backup');
+			if ($work === false) {
+				throw new LogicException('Could not ensure that the work directory in /sitecake-backup is present and writtable.');
+			}
+		} catch (RuntimeException $e) {
+			throw new LogicException('Could not ensure that the work directory in /sitecake-backup is present and writtable.');
+		}
 	}
 
 	private function loadIgnorePatterns() {
@@ -100,7 +109,8 @@ class Site {
 		}
 		$ignores = array_merge($this->ignores, array(
 			'sitecake/',
-			'sitecake-content/'
+			'sitecake-temp/',
+			'sitecake-backup/'
 		));
 	}
 

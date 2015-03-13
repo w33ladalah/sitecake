@@ -153,7 +153,7 @@ class Page {
 		foreach (phpQuery::pq('a', $this->doc) as $node) {
 			$href = $node->getAttribute('href');
 			if (!Utils::isExternalNavLink($href)) {
-				$node->setAttribute('href', 'sc-admin.php?page=' . $href);
+				$node->setAttribute('href', 'sitecake.php?page=' . $href);
 			}
 		}
 	}	

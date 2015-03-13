@@ -75,7 +75,7 @@ class Upgrade {
 	
 	static function switch_to($ver) {
 		io::file_put_contents(
-			SC_ROOT . '/' . 'sc-admin.php',
+			SC_ROOT . '/' . 'sitecake.php',
 			"<?php include 'sitecake/$ver/server/admin.php';");	
 	}
 	
