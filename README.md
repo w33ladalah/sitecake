@@ -1,48 +1,29 @@
 Welcome to SiteCake!
 ====================
 
-SiteCake is an easy to use, downloadable CMS (Content Managament System) for small websites, with a WYSIWYG, in-place, drag&drop content editor.
-A standard web hosting (web server and PHP 5.4+) is all you need to install and use it.
+SiteCake is an easy to use CMS (Content Managament System) for small websites, with a WYSIWYG, drag&drop editor.
+A standard web hosting packet (a web server and PHP 5.4+) is all you need to install and use it.
 
 For more info check the [Wiki](http://github.com/sitecake/sitecake/wiki).
 
 ## Quick Start
 
-Upload to your hosting:
+* Obtain the Sitecake zip archive. Go to the Sitecake [download page](http://sitecake.com/download) to download a pre-built zip archive or build it yourself from the source code ([instructions](http://github.com/sitecake/sitecake/wiki/Building-from-the-source)).
+* Upload the Sitecake zip archive (extracted) to your web root folder.
+* Get a Sitecake compatible template. You could use the [example template](http://sitecake.com/portfolio.zip).
+* Upload the template (extracted) to your web root folder. 
+* Open `http://yourdomain.com/scadmin.php` in browser to start editing your site (*admin* is the default password) 
 
-* [SiteCake v2.0.3. release] (https://github.com/sitecake/sitecake/releases/tag/SCv2.0.3)
-* [Sample template] (http://sitecake.com/portfolio.zip)
-* Open `yourdomain.com/sc-admin.php` to start editing 
-
-
-##### For designers:
+##### For designers
 
 * [SiteCake Basics](https://github.com/sitecake/sitecake/wiki/SiteCake-Basics)
 * [How to edit HTML page with SiteCake](https://github.com/sitecake/sitecake/wiki/How-to-edit-HTML-page-with-SiteCake) 
 * [User styles](http://github.com/sitecake/sitecake/wiki/User-Styles)
 
-
-
 ##### For developers
-* [Building from the source](http://github.com/sitecake/sitecake/wiki/Building-from-the-source)
- 
 
+* [Building from the source](http://github.com/sitecake/sitecake/wiki/Building-from-the-source)
 
 #### Copyright and License
 
-Copyright 2012 SiteCake Corp
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-      
-You may obtain a copy of the License in the license.txt file, or at:
-
-[http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html](http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html)
-
+Copyright 2012-2015 SiteCake Corp - GPL2 License (enclosed).
