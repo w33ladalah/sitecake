@@ -61,14 +61,20 @@ class ImageService extends Service {
 			return new Response('Image URI is missing', 400);
 		}
 		$uri = $request->request->get('src');
-
+		$referer = substr($uri, 0, strrpos($uri, '/'));
         $ch = curl_init($uri); 
 		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_REFERER, $referer);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
         $output = curl_exec($ch);
-        curl_close($ch);       
-		$img = WideImage::loadFromString($output);
+        curl_close($ch);
+
+        try {      
+			$img = WideImage::loadFromString($output);
+		} catch (\Exception $e) {
+			return new Response('Unable to load image from ' . $uri . ' (referer: ' . substr($uri, 0, strrchr($uri, '/')) . ')', 400);
+		}
 		unset($output);
 
 		$urlinfo = parse_url($uri);
