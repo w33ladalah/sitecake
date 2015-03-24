@@ -50,6 +50,89 @@ class Page {
 		return $urls;
 	}
 
+	/**
+	 * Lists URLs (href attribute values) from selected nav items.
+	 * 
+	 * @param  string $selector CSS selector for nav items 
+	 * @return array           list of URLs in nav items
+	 */
+	public function listNavUrls($selector) {
+		$urls = array();
+		foreach (phpQuery::pq($selector, $this->doc) as $node) {
+			$el = phpQuery::pq($node, $this->doc);
+			$urls[$el->attr('href')] = $el->text();
+		}
+		return $urls;
+	}
+
+	/**
+	 * Sets the given nav HTML content into element(s) referenced by the
+	 * given CSS selector.
+	 *  
+	 * @param string $selector one or more nav elements to set the HTML to
+	 * @param string $html the nav HTML content to set
+	 */
+	public function setNav($selector, $html) {
+		foreach (phpQuery::pq($selector, $this->doc) as $node) {
+			$el = phpQuery::pq($node, $this->doc);
+			$el->html($html);
+		}		
+	}
+
+	/**
+	 * Adds the 'noindex' meta tag in the page header, if not present.
+	 */
+	public function addRobotsNoIndex() {
+		if (phpQuery::pq('meta[content="noindex"]', $this->doc)->count() === 0) {
+			phpQuery::pq('head', $this->doc)->prepend('<meta name="robots" content="noindex"/>');
+		}
+	}
+
+	/**
+	 * Removes the 'noindex' meta tag from the page header, if present.
+	 */
+	public function removeRobotsNoIndex() {
+		phpQuery::pq('meta[content="noindex"]', $this->doc)->remove();
+	}
+
+	/**
+	 * Checks if the 'noindex' metatag is present.
+	 * @return boolean true if the 'noindex' meta tag is present
+	 */
+	public function isRobotsNoIndex() {
+		return (phpQuery::pq('meta[content="noindex"]', $this->doc)->count() > 0);
+	}
+
+	/**
+	 * Reads the page description meta tag.
+	 * 
+	 * @return string       current description text
+	 */
+	public function getPageDescription() {
+		$text = '';
+		$tag = phpQuery::pq('meta[name="description"]', $this->doc);
+		if ($tag->count() > 0) {
+			$text = phpQuery::pq($tag->elements[0])->attr('content');
+		}
+		return $text;
+	}
+
+	/**
+	 * Sets the page description meta tag with the given content.
+	 */
+	public function setPageDescription($text) {
+		$meta = phpQuery::pq('meta[name="description"]', $this->doc);
+		if ($text === '') {
+			$meta->remove();
+		} else {
+			if ($meta->count() > 0) {
+				$meta->attr('content', $text);
+			} else {
+				phpQuery::pq('head', $this->doc)->prepend('<meta name="description" content="'.$text.'"/>');
+			}
+		}
+	}
+
 	public function setContainerContent($containerName, $content) {
 		foreach (phpQuery::pq('.sc-content-' . $containerName, $this->doc) as $node) {
 			$container = phpQuery::pq($node, $this->doc);

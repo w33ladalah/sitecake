@@ -128,8 +128,8 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 		$op = phpQuery::newDocument($page->render());
 
 		$this->assertEquals('http://absolute.com', phpQuery::pq('#a1')->elements[0]->getAttribute('href'));
-		$this->assertEquals('sc-admin.php?page=index.html', phpQuery::pq('#a2')->elements[0]->getAttribute('href'));
-		$this->assertEquals('sc-admin.php?page=contact.html', phpQuery::pq('#a3')->elements[0]->getAttribute('href'));
+		$this->assertEquals('sitecake.php?page=index.html', phpQuery::pq('#a2')->elements[0]->getAttribute('href'));
+		$this->assertEquals('sitecake.php?page=contact.html', phpQuery::pq('#a3')->elements[0]->getAttribute('href'));
 		$this->assertEquals('somewhere/page.html', phpQuery::pq('#a4')->elements[0]->getAttribute('href'));
 		$this->assertEquals('/something.html', phpQuery::pq('#a5')->elements[0]->getAttribute('href'));
 	}
@@ -304,11 +304,178 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 		$page = new Page($html);
 		$p = $page->render();
 
-		$this->assertEquals('sc-admin.php?page=about.html', phpQuery::pq('#l1', $p)->elements[0]->getAttribute('href'));
+		$this->assertEquals('sitecake.php?page=about.html', phpQuery::pq('#l1', $p)->elements[0]->getAttribute('href'));
 		$this->assertEquals('/doc.html', phpQuery::pq('#l2', $p)->elements[0]->getAttribute('href'));
 		$this->assertEquals('http://google.com', phpQuery::pq('#l3', $p)->elements[0]->getAttribute('href'));
-		$this->assertEquals('sc-admin.php?page=contact.html', phpQuery::pq('#l4', $p)->elements[0]->getAttribute('href'));
-		$this->assertEquals('sc-admin.php?page=home.html', phpQuery::pq('#l5', $p)->elements[0]->getAttribute('href'));
+		$this->assertEquals('sitecake.php?page=contact.html', phpQuery::pq('#l4', $p)->elements[0]->getAttribute('href'));
+		$this->assertEquals('sitecake.php?page=home.html', phpQuery::pq('#l5', $p)->elements[0]->getAttribute('href'));
+	}
+
+	function test_listNavUrls() {
+		$html = '<html><head>'.
+			'</head><body>'.
+			'<ul class="sc-nav">'.
+			'<li><a id="l1" href="about.html">link</a></li>'.
+			'<li><a id="l2" href="/doc.html">link2</a></li>'.
+			'<li><a id="l3" href="http://google.com">link3</a></li>'.
+			'</ul>'.
+			'<a id="l4" href="contact.html"></a>'.
+			'<div class="sc-content-cnt1"><a id="l5" href="home.html"></a></div>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$urls = $page->listNavUrls('ul.sc-nav li a');
+
+		$this->assertEquals(array('about.html' => 'link', '/doc.html' => 'link2', 'http://google.com' => 'link3'), $urls);
+
+		$html = '<html><head>'.
+			'</head><body>'.
+			'<nav>'.
+			'<a href="about.html">link</a>'.
+			'<a href="/doc.html">link2</a>'.
+			'<a href="http://google.com">link3</a>'.
+			'</nav>'.
+			'<a id="l4" href="contact.html"></a>'.
+			'<div class="sc-content-cnt1"><a id="l5" href="home.html"></a></div>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$urls = $page->listNavUrls('nav:first a');
+
+		$this->assertEquals(array('about.html' => 'link', '/doc.html' => 'link2', 'http://google.com' => 'link3'), $urls);
+	}
+
+	function test_setNav() {
+		$html = '<html><head>'.
+			'</head><body>'.
+			'<ul class="sc-nav">'.
+			'</ul>'.
+			'<a id="l4" href="contact.html"></a>'.
+			'<div class="sc-content-cnt1"><a id="l5" href="home.html"></a></div>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->setNav('ul.sc-nav', 'test');
+
+		$p = $page->render();
+		$this->assertEquals('test', phpQuery::pq('ul', $p)->elements[0]->textContent);
+
+		$html = '<html><head>'.
+			'</head><body>'.
+			'<ul class="sc-nav">'.
+			'</ul>'.
+			'<a id="l4" href="contact.html"></a>'.
+			'<nav class="sc-nav">nope</nav>'.
+			'<div class="sc-content-cnt1"><a id="l5" href="home.html"></a></div>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->setNav('.sc-nav', 'test');
+
+		$p = $page->render();
+		$this->assertEquals('test', phpQuery::pq('ul', $p)->elements[0]->textContent);		
+		$this->assertEquals('test', phpQuery::pq('nav', $p)->elements[0]->textContent);		
+	}
+
+	function test_addRobotsNoIndex() {
+		$html = '<html><head>'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->addRobotsNoIndex();
+
+		$p = $page->render();
+		$this->assertEquals(1, phpQuery::pq('meta[name="robots"]')->count());
+
+		$html = '<html><head>'.
+			'<meta name="robots" content="noindex">'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->addRobotsNoIndex();
+
+		$p = $page->render();
+		$this->assertEquals(1, phpQuery::pq('meta[name="robots"]')->count());		
+	}
+
+	function test_removeRobotsNoIndex() {
+		$html = '<html><head>'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->removeRobotsNoIndex();
+
+		$p = $page->render();
+		$this->assertEquals(0, phpQuery::pq('meta[name="robots"]')->count());
+
+		$html = '<html><head>'.
+			'<meta name="robots" content="noindex">'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->removeRobotsNoIndex();
+
+		$p = $page->render();
+		$this->assertEquals(0, phpQuery::pq('meta[name="robots"]')->count());				
+	}
+
+	function test_isRobotsNoIndex() {
+		$html = '<html><head>'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$this->assertFalse($page->isRobotsNoIndex());
+
+		$html = '<html><head>'.
+			'<meta name="robots" content="noindex">'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$this->assertTrue($page->isRobotsNoIndex());		
+	}
+
+	function test_getPageDescription() {
+		$html = '<html><head>'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$this->assertEquals('', $page->getPageDescription());
+
+		$html = '<html><head>'.
+			'<meta name="description" content="page desc">'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$this->assertEquals('page desc', $page->getPageDescription());		
+	}
+
+	function test_setPageDescription() {
+		$html = '<html><head>'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->setPageDescription('page page');
+		$p = $page->render();
+		$this->assertEquals('page page', phpQuery::pq('meta[name="description"]', $p)->elements[0]->getAttribute('content'));
+
+		$html = '<html><head>'.
+			'<meta name="description" content="page desc">'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->setPageDescription('');
+		$p = $page->render();
+		$this->assertEquals(0, phpQuery::pq('meta[name="description"]', $p)->count());		
 	}	
 
 }

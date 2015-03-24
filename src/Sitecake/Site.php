@@ -104,8 +104,8 @@ class Site {
 
 	private function loadIgnorePatterns() {
 		$ignores = array();
-		if ($this->fs->has('.scignores')) {
-			$this->ignores = preg_split('/\R/', $this->fs->read('.scignores'));
+		if ($this->fs->has('.scignore')) {
+			$this->ignores = preg_split('/\R/', $this->fs->read('.scignore'));
 		}
 		$ignores = array_merge($this->ignores, array(
 			'sitecake/',
@@ -144,14 +144,15 @@ class Site {
 	 * It ignores entries from .scignore filter the output list.
 	 * 
 	 * @param  string $directory the root directory to start search into
+	 * @param  boolean pagesOnly wether only pages should be returned
 	 * @return array            the output paths list
 	 */
-	public function listScPaths($directory = '') {
+	public function listScPaths($directory = '', $pagesOnly = false) {
 		$ignores = $this->ignores;
 		return array_filter(array_merge(
 			$this->fs->listPatternPaths($directory, '/^.*\.html?$/'),
-			$this->fs->listPatternPaths($directory . '/images', '/^.*\-sc[0-9a-f]{13}[^\.]*\..+$/'),
-			$this->fs->listPatternPaths($directory . '/files', '/^.*\-sc[0-9a-f]{13}[^\.]*\..+$/')),
+			($pagesOnly ? [] : $this->fs->listPatternPaths($directory . '/images', '/^.*\-sc[0-9a-f]{13}[^\.]*\..+$/')),
+			($pagesOnly ? [] : $this->fs->listPatternPaths($directory . '/files', '/^.*\-sc[0-9a-f]{13}[^\.]*\..+$/'))),
 			function($path) use ($ignores) {
 				foreach ($ignores as $ignore) {
 					if ($ignore !== '' && strpos($path, $ignore) === 0) {
@@ -162,18 +163,24 @@ class Site {
 			});
 	}
 
+	/**
+	 * Returns a list of CMS related page file paths from the
+	 * given directory.
+	 * 
+	 * @param  string $directory a directory to read from
+	 * @return array            a list of page file paths
+	 */
 	public function listScPagesPaths($directory = '') {
-		$ignores = $this->ignores;
-		return array_filter(
-			$this->fs->listPatternPaths($directory, '/^.*\.html?$/'),
-			function($path) use ($ignores) {
-				foreach ($ignores as $ignore) {
-					if ($ignore !== '' && strpos($path, $ignore) === 0) {
-						return false;
-					}
-				}
-				return true;
-			});		
+		return $this->listScPaths($directory, true);	
+	}
+
+	/**
+	 * Returns a list of draft page file paths.
+	 * 
+	 * @return array a list of draft page file paths
+	 */
+	public function listDraftPagePaths() {
+		return $this->listScPaths($this->draftPath(), true);
 	}
 
 	/**
@@ -192,8 +199,8 @@ class Site {
 
 	}
 
-	public function getDefaultPublicPage() {
-		$paths = $this->listScPagesPaths();
+	public function getDefaultPage($directory = '') {
+		$paths = $this->listScPagesPaths($directory);
 		if (in_array('index.html', $paths)) {
 			return new Page($this->fs->read('index.html'));
 		} else if (count($paths) > 0) {
@@ -203,8 +210,16 @@ class Site {
 		}
 	}
 
+	public function getDefaultPublicPage() {
+		return $this->getDefaultPage();
+	}
+
+	public function getDefaultDraftPage() {
+		return $this->getDefaultPage($this->draftPath());
+	}
+
 	public function getPage($uri) {
-		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
+		$draftPagePaths = $this->listDraftPagePaths();
 		$pagePath = $this->draftPath() . '/' . $uri;
 		if (in_array($pagePath, $draftPagePaths)) {
 			return new Page($this->fs->read($pagePath));
@@ -215,7 +230,7 @@ class Site {
 
 	public function getAllPages() {
 		$pages = array();
-		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
+		$draftPagePaths = $this->listDraftPagePaths();
 		foreach ($draftPagePaths as $pagePath) {
 			array_push($pages, array('path' => $pagePath, 'page' => new Page($this->fs->read($pagePath))));
 		}
@@ -329,7 +344,7 @@ class Site {
 	}
 
 	protected function decorateDraft() {
-		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
+		$draftPagePaths = $this->listDraftPagePaths();
 		foreach ($draftPagePaths as $pagePath) {
 			$page = new Page($this->fs->read($pagePath));
 			$page->ensurePageId();
@@ -362,7 +377,7 @@ class Site {
 	}
 
 	protected function draftResources() {
-		$draftPagePaths = $this->listScPagesPaths($this->draftPath());
+		$draftPagePaths = $this->listDraftPagePaths();
 		$resources = array_merge(array(), $draftPagePaths);
 		foreach ($draftPagePaths as $pagePath) {
 			$page = new Page($this->fs->read($pagePath));

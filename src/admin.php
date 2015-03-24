@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL);
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 ini_set('display_errors', 'Off');
 ini_set('display_warnings', 'Off');
 date_default_timezone_set('UTC');

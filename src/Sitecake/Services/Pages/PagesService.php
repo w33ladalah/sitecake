@@ -18,7 +18,7 @@ class PagesService extends Service {
 
 	public function __construct($ctx) {
 		$this->ctx = $ctx;
-		$this->pages = new Pages($ctx['fs'], $ctx['site']);
+		$this->pages = new Pages($ctx['site'], $ctx);
 	}
 
 	public function pages($req) {

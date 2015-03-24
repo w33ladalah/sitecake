@@ -1,50 +1,24 @@
 <?php
 namespace Sitecake\Services\Pages;
 
-use League\Flysystem\Filesystem;
 use \phpQuery as phpQuery;
 use Sitecake\Site;
 
 class Pages {
 	
-	protected $fs;
+	protected $conf;
 
 	protected $site;
 
-	protected $publicPagePaths;
-
-	protected $_containers;
-
-	public function __construct(Filesystem $fs, Site $site) {
-		$this->fs = $fs;
+	public function __construct(Site $site, $conf) {
 		$this->site = $site;
+		$this->conf = $conf;
 		$this->_containers;
 	}
 
-	public function setContainerContent($container, $content) {
-		if (array_key_exists($container, $this->containers())) {
-			foreach ($this->containers()[$container] as $page) {
-				$page->setContainerContent($container, $content);
-			}
-		}
-	}
+	public function read() {
+		$draftPages = $this->site->getAllPages();
 
-	protected function getPublicPagePaths() {
-		if (!isset($this->publicPagePaths)) {
-			$this->publicPagePaths = $this->site->listScPagePaths();
-		}
-		return $this->publicPagePaths;
-	}
-
-	protected function containers() {
-		if (!$this->_containers) {
-			$this->loadContainers();
-		}
-		return $this->_containers;
-	}
-
-	protected function loadContainers() {
-		
 	}
 
 	static function get($full = false) {
