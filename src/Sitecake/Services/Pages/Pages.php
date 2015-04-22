@@ -22,7 +22,7 @@ class Pages {
 		if ($draftPages['index.html']) {
 			$navUrls = $draftPages['index.html']['page']->listNavUrls();
 		} else {
-			$navUrls = $draftPages
+			$navUrls = $draftPages;
 		}
 	}
 
