@@ -19,7 +19,14 @@ class Pages {
 	public function read() {
 		$draftPages = $this->site->getAllPages();
 
+		if ($draftPages['index.html']) {
+			$navUrls = $draftPages['index.html']['page']->listNavUrls();
+		} else {
+			$navUrls = $draftPages
+		}
 	}
+
+
 
 	static function get($full = false) {
 		$pages = array();

@@ -476,6 +476,44 @@ class PageTest extends \PHPUnit_Framework_TestCase {
 		$page->setPageDescription('');
 		$p = $page->render();
 		$this->assertEquals(0, phpQuery::pq('meta[name="description"]', $p)->count());		
+	}
+
+	function test_setPageTitle() {
+		$html = '<html><head>'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->setPageTitle('some title');
+		$o = phpQuery::newDocument((string)$page);	
+		$this->assertEquals('some title', phpQuery::pq('title', $o)->html());
+
+		$html = '<html><head>'.
+			'<title>page title</title>'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$page->setPageTitle('');
+		$o = phpQuery::newDocument((string)$page);
+		$this->assertEquals('', phpQuery::pq('title')->html());		
+	}
+
+	function test_getPageTitle() {
+		$html = '<html><head>'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);	
+		$this->assertEquals('', $page->getPageTitle());	
+
+		$html = '<html><head>'.
+			'<title>page title</title>'.
+			'</head><body>'.		
+			'</body></html>';
+
+		$page = new Page($html);
+		$this->assertEquals('page title', $page->getPageTitle());	
 	}	
 
 }

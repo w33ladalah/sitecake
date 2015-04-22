@@ -150,17 +150,70 @@ class Page {
 		phpQuery::pq('meta[content="sitecake"]', $this->doc)->remove();
 	}
 
-	public function ensurePageId() {
+	/**
+	 * Adds an attribute to the sitecake metadata tag. If the metadata tag does not
+	 * exists it will be created.
+	 * 
+	 * @param string $attr  attribute name
+	 * @param string $value attribute value
+	 */
+	public function addMetadataAttr($attr, $value) {
 		$this->addMetadata();
-		phpQuery::pq('meta[content="sitecake"]', $this->doc)->attr('data-pageid', Utils::id());
+		phpQuery::pq('meta[content="sitecake"]', $this->doc)->attr('data-'.$attr, $value);
+	}
+
+	/**
+	 * Removes the specified attribute of the sitecake meta tag.
+	 * 
+	 * @param  string $attr attribute name
+	 */
+	public function removeMetadataAttr($attr) {
+		phpQuery::pq('meta[content="sitecake"]', $this->doc)->removeAttr('data-'.$attr);
+	}
+
+	/**
+	 * Reads the metadata attribute value.
+	 * 
+	 * @param  string $attr attribute name
+	 * @return string       returns the attribute value or an empty string if attribute is not present
+	 */
+	public function getMetadataAttr($attr) {
+		return phpQuery::pq('meta[content="sitecake"]', $this->doc)->attr('data-'.$attr);
+	}
+
+	/**
+	 * Sets the page title (the title tag).
+	 */
+	public function setPageTitle($val) {
+		$title = phpQuery::pq('title', $this->doc);
+		if ($title->count() > 0) {
+			$title->html($val);
+		} else {
+			phpQuery::pq('head', $this->doc)->prepend('<title>'.$val.'</title>');
+		}
+	}
+
+	/**
+	 * Returns the page title (the title tag).
+	 * 
+	 * @return string the current value of the title tag
+	 */
+	public function getPageTitle() {
+		return phpQuery::pq('title', $this->doc)->html();
+	}
+
+	public function ensurePageId() {
+		if ('' == $this->getMetadataAttr('pageid')) {
+			$this->addMetadataAttr('pageid', Utils::id());			
+		}
 	}
 
 	public function pageId() {
-		return phpQuery::pq('meta[content="sitecake"]', $this->doc)->attr('data-pageid');
+		return $this->getMetadataAttr('pageid');
 	}
 
 	public function removePageId() {
-		phpQuery::pq('meta[content="sitecake"]', $this->doc)->removeAttr('data-pageid');
+		$this->removeMetadataAttr('pageid');
 	}
 
 	public function appendCodeToHead($code) {
