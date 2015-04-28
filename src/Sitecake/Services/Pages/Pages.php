@@ -13,7 +13,6 @@ class Pages {
 	public function __construct(Site $site, $conf) {
 		$this->site = $site;
 		$this->conf = $conf;
-		$this->_containers;
 	}
 
 	public function read() {

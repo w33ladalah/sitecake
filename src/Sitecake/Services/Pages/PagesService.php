@@ -2,7 +2,7 @@
 
 namespace Sitecake\Services\Pages;
 
-use Sitecake\Services\Service;
+//use Sitecake\Services\Service;
 
 class PagesService extends Service {
 
@@ -18,7 +18,7 @@ class PagesService extends Service {
 
 	public function __construct($ctx) {
 		$this->ctx = $ctx;
-		$this->pages = new Pages($ctx['site'], $ctx);
+		//$this->pages = new Pages($ctx['site'], $ctx);
 	}
 
 	public function pages($req) {
