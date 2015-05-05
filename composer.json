@@ -1,7 +1,7 @@
 {
 	"name": "sitecake/sitecake-cms",
     "description": "SiteCake - a simple, drag and drop CMS",
-	"version": "2.2.7",
+	"version": "2.2.8",
     "type": "project",
     "keywords": [ "cms" ],
     "homepage": "http://sitecake.com",
