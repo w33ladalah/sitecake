@@ -3,6 +3,8 @@
 namespace Sitecake;
 
 use \phpQuery;
+use \DOMDocumentWrapper;
+use \phpQueryObject;
 
 class Page {
 
@@ -12,9 +14,16 @@ class Page {
 
 	protected $_containers;
 
+	private function createPhpQueryDocSafe($html) {
+		$wrapper = new DOMDocumentWrapper($html, null, md5(mt_rand().mt_rand()));
+		phpQuery::$documents[$wrapper->id] = $wrapper;
+		phpQuery::selectDocument($wrapper->id);
+		return new phpQueryObject($wrapper->id);		
+	}
+
 	public function __construct($html) {
 		$this->sourceHtml = $html;		
-		$this->doc = phpQuery::newDocument($html);
+		$this->doc = $this->createPhpQueryDocSafe($html);
 	}
 
 	public function __toString() {
@@ -250,7 +259,7 @@ class Page {
 			$container = phpQuery::pq($node, $this->doc);
 			$class = $container->attr('class');
 			if (preg_match('/(^|\s)sc\-content($|\s)/', $class, $matches)) {
-				$container->addClass('sc-content-_cnt_' . uniqid());
+				$container->addClass('sc-content-_cnt_' . mt_rand() . mt_rand());
 			}
 		}		
 	}

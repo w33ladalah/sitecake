@@ -27,8 +27,9 @@ class ListPatternPaths implements PluginInterface {
         $existingFiles = $this->fs->listContents($directory, $recursive);       
         $matchedPaths = array();
         foreach ($existingFiles as $file) {
-            if (preg_match($pattern, $file['path']) === 1) {
-                $matchedPaths[] = $file['path'];
+            $normalizedPath = str_replace('\\', '/', $file['path']);
+            if (preg_match($pattern, $normalizedPath) === 1) {
+                $matchedPaths[] = $normalizedPath;
             }
         }
         return $matchedPaths;

@@ -2,7 +2,7 @@
 
 namespace Sitecake\Services\Pages;
 
-//use Sitecake\Services\Service;
+use Sitecake\Services\Service;
 
 class PagesService extends Service {
 
