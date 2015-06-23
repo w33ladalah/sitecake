@@ -32,7 +32,7 @@ $app['EDITOR_EDIT_URL'] = 'sitecake/${version}/client/contentmanager/contentmana
 $app['EDITOR_CONFIG_URL'] = 'sitecake/editor.cfg';
 
 // include the server-side configuration that user is expected to modify
-include('config.php');
+require(__DIR__.'/config.php');
 
 // global error handler
 $app->error(function (\LogicException $e, $code) {
