@@ -5,6 +5,8 @@ A standard web hosting packet (a web server and PHP 5.4+) is all you need to ins
 
 For more info, instructions and documentation check the [Wiki](http://github.com/sitecake/sitecake/wiki).
 
+For questions and discussion, check the [Sitecake Forum](http://forum.sitecake.com).
+
 ## Quick start
 
 * Obtain a Sitecake zip archive. Go to the Sitecake [download page](http://sitecake.com/latest) to download a pre-built zip archive or build it yourself from the source code ([instructions](http://github.com/sitecake/sitecake/wiki/Building-from-the-source)).
