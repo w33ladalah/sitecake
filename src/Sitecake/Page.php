@@ -236,7 +236,7 @@ class Page {
 			$html, $matches);
 		foreach ($matches[0] as $match) {
 			if (Utils::isResourceUrl($match)) {
-				array_push($urls, $match);	
+				array_push($urls, urldecode($match));	
 			}
 		}
 		return $urls;

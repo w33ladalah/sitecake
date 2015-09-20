@@ -27,7 +27,7 @@ class UploadService extends Service {
 		if (!$request->headers->has('x-filename')) {
 			return new Response('Filename is missing (header X-FILENAME)', 400);
 		}
-		$filename = $request->headers->get('x-filename');
+		$filename = base64_decode($request->headers->get('x-filename'));
 		$pathinfo = pathinfo($filename);
 		$dpath = Utils::resurl($this->draftPath.'/files', 
 			$pathinfo['filename'], null, null, $pathinfo['extension']);
