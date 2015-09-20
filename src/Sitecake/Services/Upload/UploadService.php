@@ -43,7 +43,7 @@ class UploadService extends Service {
 			return $this->json($request, array('status' => 1, 
 				'errMessage' => 'Unable to upload file '.$pathinfo['filename'].'.'.$pathinfo['extension']), 200);
 		} else {
-			return $this->json($request, array('status' => 0, 'url' => $res), 200);
+			return $this->json($request, array('status' => 0, 'url' => $dpath), 200);
 		}
 	}
 
