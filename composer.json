@@ -1,7 +1,7 @@
 {
 	"name": "sitecake/sitecake-cms",
     "description": "SiteCake - a simple, drag and drop CMS",
-	"version": "2.2.9",
+	"version": "2.2.10",
     "type": "project",
     "keywords": [ "cms" ],
     "homepage": "http://sitecake.com",
@@ -24,15 +24,15 @@
     },
 
     "require": {
-        "silex/silex": "~1.2",
-        "jdesrosiers/silex-cors-provider": "~0.1",
-        "symfony/translation": "~2.3",
-        "symfony/config": "~2.3",
-        "symfony/yaml": "~2.3",        
-    	"pclzip/pclzip": "dev-master",
-    	"electrolinux/phpquery": "dev-master",
-    	"smottt/wideimage": "dev-master",
-        "league/flysystem": "1.0.*@dev"
+        "silex/silex": "1.2",
+        "jdesrosiers/silex-cors-provider": "0.1",
+        "symfony/translation": "2.3",
+        "symfony/config": "2.3",
+        "symfony/yaml": "2.3",        
+    	"pclzip/pclzip": "dev-master#19dd1de9d3f5fc4d7d70175b4c344dee329f45fd",
+    	"electrolinux/phpquery": "dev-master#aa09e7af2e8d9a965102cf50d9b657aca96fd013",
+    	"smottt/wideimage": "dev-master#669f63f1452c7fc70120fff4bc457727714a0834",
+        "league/flysystem": "1.0.12"
     },
 
     "require-dev": {
