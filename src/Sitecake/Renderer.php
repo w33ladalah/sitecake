@@ -41,26 +41,28 @@ class Renderer {
 	}
 
 	protected function clientCodeLogin() {
-		$globals = "var sitecakeGlobals = {".
+		$globals = 'var sitecakeGlobals = {'.
 			"editMode: false, " .
-			'serverVersionId: "SiteCake CMS ${version}", ' .
-			"serviceUrl:'" . $this->options['SERVICE_URL'] . "', " .
-			"configUrl:'" . $this->options['EDITOR_CONFIG_URL'] . "', " .
-			"forceLoginDialog: true" .
-		"};";
+			'serverVersionId: "${version}", ' .
+			'phpVersion: "' . phpversion() . '", ' . 
+			'serviceUrl:"' . $this->options['SERVICE_URL'] . '", ' .
+			'configUrl:"' . $this->options['EDITOR_CONFIG_URL'] . '", ' .
+			'forceLoginDialog: true' .
+		'};';
 				
 		return HtmlUtils::wrapToScriptTag($globals) .
 			HtmlUtils::scriptTag($this->options['EDITOR_LOGIN_URL']);
 	}
 
 	protected function clientCodeEditor($published) {
-		$globals = "var sitecakeGlobals = {".
-			"editMode: true, " .
-			'serverVersionId: "SiteCake CMS ${version}", ' .
-			"serviceUrl:'" . $this->options['SERVICE_URL'] . "', " .
-			"configUrl:'" . $this->options['EDITOR_CONFIG_URL'] . "', " .				
-			"draftPublished: " . ($published ? 'true' : 'false') .
-		"};";
+		$globals = 'var sitecakeGlobals = {'.
+			'editMode: true, ' .
+			'serverVersionId: "${version}", ' .
+			'phpVersion: "' . phpversion() . '", ' . 			
+			'serviceUrl: "' . $this->options['SERVICE_URL'] . '", ' .
+			'configUrl: "' . $this->options['EDITOR_CONFIG_URL'] . '", ' .				
+			'draftPublished: ' . ($published ? 'true' : 'false') .
+		'};';
 				
 		return HtmlUtils::wrapToScriptTag($globals) .
 			HtmlUtils::scriptTag($this->options['EDITOR_EDIT_URL']);
