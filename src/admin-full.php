@@ -29,7 +29,7 @@ $app['EDITOR_LOGIN_URL'] = 'sitecake/${version}/client/publicmanager/publicmanag
 $app['EDITOR_EDIT_URL'] = 'sitecake/${version}/client/contentmanager/contentmanager.nocache.js';
 
 // a URL relative to sitecake.php that Sitecake editor is using to load the editor configuration
-$app['EDITOR_CONFIG_URL'] = 'sitecake/editor.cfg';
+$app['EDITOR_CONFIG_URL'] = 'sitecake/editor.cnf';
 
 // include the server-side configuration that user is expected to modify
 require(__DIR__.'/config.php');
