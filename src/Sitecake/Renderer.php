@@ -44,7 +44,7 @@ class Renderer {
 		$globals = 'var sitecakeGlobals = {'.
 			"editMode: false, " .
 			'serverVersionId: "${version}", ' .
-			'phpVersion: "' . phpversion() . '", ' . 
+			'phpVersion: "' . phpversion() . '@' . PHP_OS . '", ' . 
 			'serviceUrl:"' . $this->options['SERVICE_URL'] . '", ' .
 			'configUrl:"' . $this->options['EDITOR_CONFIG_URL'] . '", ' .
 			'forceLoginDialog: true' .
@@ -58,7 +58,7 @@ class Renderer {
 		$globals = 'var sitecakeGlobals = {'.
 			'editMode: true, ' .
 			'serverVersionId: "${version}", ' .
-			'phpVersion: "' . phpversion() . '", ' . 			
+			'phpVersion: "' . phpversion() . '@' . PHP_OS . '", ' . 			
 			'serviceUrl: "' . $this->options['SERVICE_URL'] . '", ' .
 			'configUrl: "' . $this->options['EDITOR_CONFIG_URL'] . '", ' .				
 			'draftPublished: ' . ($published ? 'true' : 'false') .
