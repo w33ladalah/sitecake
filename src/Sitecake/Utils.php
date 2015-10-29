@@ -291,13 +291,13 @@ class Utils {
 	 * @param  string $platform an optional string to define the PHP OS platform. By default it's PHP_OS constant.
 	 * @return string           converted filename
 	 */
-	public static function sanitizeFilename($filename, $platform = PHP_OS, $locale = ) {
+	public static function sanitizeFilename($filename, $platform = PHP_OS) {
 		$filename = self::slug($filename, array('transliterate'=>true));
 
 		if ( 'WIN' == substr( $platform, 0, 3 ) ) {		
 			$codepage = 'UTF-8';
 		} else {
-			$codepage = 'Windows-1251'
+			$codepage = 'Windows-1251';
 		}
 
 		$charset = 'UTF-8';
