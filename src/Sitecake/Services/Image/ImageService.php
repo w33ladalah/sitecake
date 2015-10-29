@@ -32,15 +32,15 @@ class ImageService extends Service {
 		if (!$request->headers->has('x-filename')) {
 			return new Response('Filename is missing (header X-FILENAME)', 400);
 		}
-		$filename = $request->headers->get('x-filename');
-
+		$filename = base64_decode($request->headers->get('x-filename'));
 		$pathinfo = pathinfo($filename);
+
 		if (!in_array(strtolower($pathinfo['extension']), self::$imageExtensions)) {
 			return $this->json($request, array('status' => 1, 
 				'errMessage' => "$filename is not an image file" ), 200);
 		}
 
-		$filename = $pathinfo['filename'];
+		$filename = Utils::sanitizeFilename($pathinfo['filename']);
 		$ext = $pathinfo['extension'];
 		$img = WideImage::load("php://input");
 

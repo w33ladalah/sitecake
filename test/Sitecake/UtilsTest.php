@@ -170,4 +170,14 @@ class UtilsTest extends \PHPUnit_Framework_TestCase {
 			)
 		), $info);
 	}
+
+	function test_sanitizeFilename() {
+		$this->assertEquals("some-file-name", Utils::sanitizeFilename("some-file~name", "Unix"));
+		$this->assertEquals("ssscccczz", Utils::sanitizeFilename("sŠšČčĆćĐđŽž", "Unix"));
+		$this->assertEquals("jcukengshshzhfyvaproldzheyachsmitbyu", Utils::sanitizeFilename("йцукенгшщзхъфывапролджэячсмитьбю", "Unix"));
+		$this->assertEquals("file", Utils::sanitizeFilename("׳קראטוןםפשדגכעיחלךףזסבהנמצתץ", "Unix"));
+		$this->assertEquals("some-file-name", Utils::sanitizeFilename("some-file~name", "WINDOWS"));
+		$this->assertEquals("ssscccczz", Utils::sanitizeFilename("sŠšČčĆćĐđŽž", "WINDOWS"));		
+		$this->assertEquals("jcukengshshzhfyvaproldzheyachsmitbyu", Utils::sanitizeFilename("йцукенгшщзхъфывапролджэячсмитьбю", "WINDOWS"));
+	}
 }

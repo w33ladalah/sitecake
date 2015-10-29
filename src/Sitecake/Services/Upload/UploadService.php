@@ -30,7 +30,7 @@ class UploadService extends Service {
 		$filename = base64_decode($request->headers->get('x-filename'));
 		$pathinfo = pathinfo($filename);
 		$dpath = Utils::resurl($this->draftPath.'/files', 
-			$pathinfo['filename'], null, null, $pathinfo['extension']);
+			Utils::sanitizeFilename($pathinfo['filename']), null, null, $pathinfo['extension']);
 
 		if (!$this->isSafeExtension($pathinfo['extension'])) {
 			return $this->json($request, array('status' => 1, 

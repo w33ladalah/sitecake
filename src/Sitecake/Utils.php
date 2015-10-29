@@ -99,7 +99,9 @@ class Utils {
 	 */
 	static function slug($str, $options = array()) {
 		// Make sure string is in UTF-8 and strip invalid UTF-8 characters
-		$str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
+		if (function_exists( 'mb_convert_encoding')) {
+			$str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
+		}
 		
 		$defaults = array(
 			'delimiter' => '-',
@@ -282,5 +284,40 @@ class Utils {
 		return (strpos($url, '/') !== false) || (strpos($url, 'http://') === 0) || 
 			(substr($url, -5) !== '.html');
 	}			
+
+	/**
+	 * Converts a file name into a UTF-8 version regarding the PHP OS.
+	 * @param  string $filename a filename to be converted
+	 * @param  string $platform an optional string to define the PHP OS platform. By default it's PHP_OS constant.
+	 * @return string           converted filename
+	 */
+	public static function sanitizeFilename($filename, $platform = PHP_OS, $locale = ) {
+		$filename = self::slug($filename, array('transliterate'=>true));
+
+		if ( 'WIN' == substr( $platform, 0, 3 ) ) {		
+			$codepage = 'UTF-8';
+		} else {
+			$codepage = 'Windows-1251'
+		}
+
+		$charset = 'UTF-8';
+
+		if ( function_exists( 'iconv' ) ) {
+			$filename = iconv( $charset, $codepage . '//TRANSLIT//IGNORE', $filename );
+		} elseif ( function_exists( 'mb_convert_encoding' ) ) {
+			$filename = mb_convert_encoding( $filename, $charset, $codepage );
+		}
+
+		// remove unwanted characters
+		$filename = preg_replace('~[^-\w\.]+~', '', $filename);
+		// trim ending dots (for security reasons and win compatibility)
+		$filename = preg_replace('~\.+$~', '', $filename);
+
+		if (empty($filename)) {
+			$filename = "file";
+		}
+
+		return $filename;
+	}
 
 }
